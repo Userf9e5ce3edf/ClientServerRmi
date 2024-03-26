@@ -19,7 +19,9 @@ public class MySQLManager {
         }
         return instance;
     }
-
+    public PreparedStatement prepareStatement(String query) throws SQLException {
+        return conn.prepareStatement(query);
+    }
     private void connexion()
     {
         try {

@@ -1,12 +1,10 @@
 import Interfaces.IRequete;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
-public class Client {
-    private Client() {}
+public class ClientDistant {
+    private ClientDistant() {}
 
     public static void main(String[] args) {
         try {
@@ -23,6 +21,14 @@ public class Client {
             // Test the RechercheComposant method
             List<String> composants = stub.RechercheComposant("Famille10");
             System.out.println("Composants: " + composants);
+
+            // Test the acheterComposant method
+            boolean purchaseResult = stub.acheterComposant("b9b6233", 5, "John Doe");
+            System.out.println("Purchase result: " + purchaseResult);
+
+            // Test the ajouterComposant method
+            boolean addResult = stub.ajouterComposant("b9b6233", 10);
+            System.out.println("Add component result: " + addResult);
 
             // Test the payerFacture method
             boolean paymentResult = stub.payerFacture("John Doe", 100.0);
