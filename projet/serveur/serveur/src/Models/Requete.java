@@ -2,6 +2,7 @@ package Models;
 
 import DAO.DAOClient;
 import DAO.DAOComposant;
+import DAO.DAOFacture;
 import Interfaces.IRequete;
 
 import java.rmi.RemoteException;
@@ -11,6 +12,7 @@ import java.util.List;
 public class Requete implements IRequete {
     private DAOClient daoClient = new DAOClient();
     private DAOComposant daoComposant = new DAOComposant();
+    private DAOFacture daoFacture = new DAOFacture();
 
     public String VoirStock(String refComposant) {
         Composant composant = daoComposant.findById(refComposant);
@@ -53,10 +55,12 @@ public class Requete implements IRequete {
 
     @Override
     public boolean payerFacture(String nomClient, double montant) throws RemoteException {
-        Client client = daoClient.findByName(nomClient).get(0);
-        if (client != null && client.total_facture >= montant) {
-            client.total_facture -= montant;
-            daoClient.update(client);
+        List<Facture> factures = (List<Facture>) daoFacture.findByName(nomClient).get(0);
+
+        Facture facture = factures.get(0);
+        if (facture != null && facture.getTotalFacture() >= montant) {
+            facture.setTotalFacture(facture.getTotalFacture() - montant);
+            daoFacture.update(facture);
             return true;
         }
         return false;
@@ -64,12 +68,12 @@ public class Requete implements IRequete {
 
     @Override
     public String ConsulterFacture(String nomClient) throws RemoteException {
-        Client client = daoClient.findByName(nomClient).get(0);
-        if (client != null) {
-            return "Client: " + client.nom + "\n" +
-                    "Total bill: " + client.total_facture + "\n" +
-                    "Payment method: " + client.mode_paiement;
+        Facture facture = daoFacture.findByName(nomClient).get(0);
+        if (facture != null) {
+            return "Client: " + facture.getClient().getNom() + "\n" +
+                    "Total facture: " + facture.getTotalFacture() + "\n" +
+                    "Mode de paiment: " + facture.getModeDePaiment();
         }
-        return "Client does not exist";
+        return "Client n'existe pas";
     }
 }

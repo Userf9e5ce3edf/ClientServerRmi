@@ -12,12 +12,10 @@ public class DAOClient extends DAOGenerique<Client> {
     @Override
     public Client create(Client client) {
         try {
-            String query = "INSERT INTO clients (nom, adresse, total_facture, mode_paiement) VALUES (?, ?, ?, ?)";
+            String query = "INSERT INTO clients (nom, adresse) VALUES (?, ?)";
             PreparedStatement stmt = mySQLManager.prepareStatement(query);
             stmt.setString(1, client.nom);
             stmt.setString(2, client.adresse);
-            stmt.setDouble(3, client.total_facture);
-            stmt.setString(4, client.mode_paiement);
             stmt.executeUpdate();
         } catch (SQLException e) {
             System.err.println("Erreur SQL lors de la creation d'un client : " + e.getMessage());
@@ -31,8 +29,6 @@ public class DAOClient extends DAOGenerique<Client> {
             String query = "UPDATE clients SET adresse = ?, total_facture = ?, mode_paiement = ? WHERE nom = ?";
             PreparedStatement stmt = mySQLManager.prepareStatement(query);
             stmt.setString(1, client.adresse);
-            stmt.setDouble(2, client.total_facture);
-            stmt.setString(3, client.mode_paiement);
             stmt.setString(4, client.nom);
             stmt.executeUpdate();
         } catch (SQLException e) {
@@ -69,7 +65,9 @@ public class DAOClient extends DAOGenerique<Client> {
             stmt.setString(1, id);
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
-                client = new Client(rs.getString("nom"), rs.getString("adresse"), rs.getDouble("total_facture"), rs.getString("mode_paiement"));
+                client = new Client(
+                        rs.getString("nom"),
+                        rs.getString("adresse"));
             }
         } catch (SQLException e) {
             System.err.println("Erreur SQL lors de la recherche d'un client par id : " + e.getMessage());
@@ -85,7 +83,9 @@ public class DAOClient extends DAOGenerique<Client> {
             PreparedStatement stmt = mySQLManager.prepareStatement(query);
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
-                Client client = new Client(rs.getString("nom"), rs.getString("adresse"), rs.getDouble("total_facture"), rs.getString("mode_paiement"));
+                Client client = new Client(
+                        rs.getString("nom"),
+                        rs.getString("adresse"));
                 clients.add(client);
             }
         } catch (SQLException e) {
@@ -103,7 +103,9 @@ public class DAOClient extends DAOGenerique<Client> {
             stmt.setString(1, name);
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
-                Client client = new Client(rs.getString("nom"), rs.getString("adresse"), rs.getDouble("total_facture"), rs.getString("mode_paiement"));
+                Client client = new Client(
+                        rs.getString("nom"),
+                        rs.getString("adresse"));
                 clients.add(client);
             }
         } catch (SQLException e) {

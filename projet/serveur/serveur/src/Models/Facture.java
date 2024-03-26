@@ -3,34 +3,45 @@ package Models;
 import java.rmi.Remote;
 
 public class Facture implements Remote {
-    private final String nomClient;
-    private final String adresseClient;
-    private final double totalFacture;
-    private final ENUMModeDePaiment modeDePaiment;
-
-    public Facture(String nomClient,
-                   String adresseClient,
+    private final Client client;
+    private double totalFacture;
+    private EnumModeDePaiment modeDePaiment;
+    private EnumStatutFacture statutFacture;
+    public Facture(Client client,
                    double totalFacture,
-                   ENUMModeDePaiment modeDePaiment) {
-        this.nomClient = nomClient;
-        this.adresseClient = adresseClient;
+                   EnumModeDePaiment modeDePaiment) {
+        this.client = client;
         this.totalFacture = totalFacture;
         this.modeDePaiment = modeDePaiment;
+        this.statutFacture = EnumStatutFacture.ENCOURS;
     }
 
-    public String getNomClient() {
-        return nomClient;
+    public EnumStatutFacture getStatutFacture() {
+        return statutFacture;
     }
-
-    public String getAdresseClient() {
-        return adresseClient;
+    public void setStatutFacture(EnumStatutFacture statutFacture) {
+        this.statutFacture = statutFacture;
     }
-
     public double getTotalFacture() {
         return totalFacture;
     }
-
-    public ENUMModeDePaiment getModeDePaiment() {
+    public EnumModeDePaiment getModeDePaiment() {
         return modeDePaiment;
+    }
+    public void setTotalFacture(double totalFacture) {
+        this.totalFacture = totalFacture;
+    }
+    public Client getClient() {
+        return client;
+    }
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("Facture{");
+        sb.append("client=").append(client);
+        sb.append(", totalFacture=").append(totalFacture);
+        sb.append(", modeDePaiment=").append(modeDePaiment);
+        sb.append(", statutFacture=").append(statutFacture);
+        sb.append('}');
+        return sb.toString();
     }
 }

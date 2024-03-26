@@ -13,12 +13,12 @@ public class DAOComposant extends DAOGenerique<Composant> {
     @Override
     public Composant create(Composant composant) {
         try {
-            String query = "INSERT INTO composants (reference, famille, prix_unitaire, quantite_en_stock) VALUES (?, ?, ?, ?)";
+            String query = "INSERT INTO composants (reference, famille, prix, quantite) VALUES (?, ?, ?, ?)";
             PreparedStatement stmt = mySQLManager.prepareStatement(query);
-            stmt.setString(1, composant.reference);
-            stmt.setString(2, composant.famille);
-            stmt.setFloat(3, composant.prix);
-            stmt.setInt(4, composant.quantite);
+            stmt.setString(1, composant.getReference());
+            stmt.setString(2, composant.getFamille());
+            stmt.setFloat(3, composant.getPrix());
+            stmt.setInt(4, composant.getQuantite());
             stmt.executeUpdate();
         } catch (SQLException e) {
             System.err.println("Erreur SQL lors de la creation d'un composant : " + e.getMessage());
@@ -29,12 +29,12 @@ public class DAOComposant extends DAOGenerique<Composant> {
     @Override
     public Composant update(Composant composant) {
         try {
-            String query = "UPDATE composants SET famille = ?, prix_unitaire = ?, quantite_en_stock = ? WHERE reference = ?";
+            String query = "UPDATE composants SET famille = ?, prix = ?, quantite = ? WHERE reference = ?";
             PreparedStatement stmt = mySQLManager.prepareStatement(query);
-            stmt.setString(1, composant.famille);
-            stmt.setFloat(2, composant.prix);
-            stmt.setInt(3, composant.quantite);
-            stmt.setString(4, composant.reference);
+            stmt.setString(1, composant.getFamille());
+            stmt.setFloat(2, composant.getPrix());
+            stmt.setInt(3, composant.getQuantite());
+            stmt.setString(4, composant.getReference());
             stmt.executeUpdate();
         } catch (SQLException e) {
             System.err.println("Erreur SQL lors de la mise à jour d'un composant : " + e.getMessage());
@@ -47,7 +47,7 @@ public class DAOComposant extends DAOGenerique<Composant> {
         try {
             String query = "DELETE FROM composants WHERE reference = ?";
             PreparedStatement stmt = mySQLManager.prepareStatement(query);
-            stmt.setString(1, composant.reference);
+            stmt.setString(1, composant.getReference());
             stmt.executeUpdate();
         } catch (SQLException e) {
             System.err.println("Erreur SQL lors de la suppression d'un composant : " + e.getMessage());
@@ -73,8 +73,9 @@ public class DAOComposant extends DAOGenerique<Composant> {
                 composant = new Composant(
                         rs.getString("reference"),
                         rs.getString("famille"),
-                        rs.getFloat("prix_unitaire"),
-                        rs.getInt("quantite_en_stock"));
+                        rs.getFloat("prix"),
+                        rs.getInt("quantite"));
+                composant.setId(rs.getInt("id"));
             }
         } catch (SQLException e) {
             System.err.println("Erreur SQL lors de la recherche d'un composant par id : " + e.getMessage());
@@ -93,8 +94,9 @@ public class DAOComposant extends DAOGenerique<Composant> {
                 Composant composant = new Composant(
                         rs.getString("reference"),
                         rs.getString("famille"),
-                        rs.getFloat("prix_unitaire"),
-                        rs.getInt("quantite_en_stock"));
+                        rs.getFloat("prix"),
+                        rs.getInt("quantite"));
+                composant.setId(rs.getInt("id"));
                 composants.add(composant);
             }
         } catch (SQLException e) {
@@ -115,8 +117,9 @@ public class DAOComposant extends DAOGenerique<Composant> {
                 Composant composant = new Composant(
                         rs.getString("reference"),
                         rs.getString("famille"),
-                        rs.getFloat("prix_unitaire"),
-                        rs.getInt("quantite_en_stock"));
+                        rs.getFloat("prix"),
+                        rs.getInt("quantite"));
+                composant.setId(rs.getInt("id"));
                 composants.add(composant);
             }
         } catch (SQLException e) {
