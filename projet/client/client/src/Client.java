@@ -1,4 +1,3 @@
-import Interfaces.IMessage;
 import Interfaces.IRequete;
 
 import java.util.ArrayList;
@@ -11,14 +10,27 @@ public class Client {
 
     public static void main(String[] args) {
         try {
-            // Récupérer le registre
+            // Retrieve the registry
             Registry reg = LocateRegistry.getRegistry(null);
-            // Recherche dans le registre de l'objet distant
-            IRequete stub = (IRequete) reg.lookup("Hello");
-            // Appel de la méthode distante à l'aide de l'objet obtenu
 
-            List<String> test = stub.RechercheComposant("voirStock");
-            System.out.println(test);
+            // Look up the remote object in the registry
+            IRequete stub = (IRequete) reg.lookup("Hello");
+
+            // Test the VoirStock method
+            String stock = stub.VoirStock("b9b6233");
+            System.out.println("Stock: " + stock);
+
+            // Test the RechercheComposant method
+            List<String> composants = stub.RechercheComposant("Famille10");
+            System.out.println("Composants: " + composants);
+
+            // Test the payerFacture method
+            boolean paymentResult = stub.payerFacture("John Doe", 100.0);
+            System.out.println("Payment result: " + paymentResult);
+
+            // Test the ConsulterFacture method
+            String bill = stub.ConsulterFacture("John Doe");
+            System.out.println("Bill: " + bill);
 
         } catch (Exception e) {
             System.err.println(e.toString());

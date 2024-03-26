@@ -4,6 +4,7 @@ import Models.Requete;
 
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
+import java.rmi.server.UnicastRemoteObject;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -19,19 +20,16 @@ public class Serveur {
     public static void main(String args[]) {
 
         BDDPremierConnection();
-        Requete req = new Requete();
-        String test = req.VoirStock("b9b6233");
-        /**
         try {
-            IRequete requeteImpl = new Requete();
-            Registry registry = LocateRegistry.getRegistry();
-            registry.bind("Hello", requeteImpl);
+            Requete obj = new Requete();
+            IRequete stub = (IRequete) UnicastRemoteObject.exportObject(obj, 0);
+            Registry reg = LocateRegistry.getRegistry();
+            reg.bind("Hello", stub);
 
-            System.out.println("Le Serveur est prêt...");
+            System.out.println("Server ready");
         } catch (Exception e) {
-            System.err.println(e.toString());
+            System.err.println("Server exception: " + e.toString());
             e.printStackTrace();
         }
-         **/
     }
 }

@@ -5,10 +5,10 @@ import java.util.ArrayList;
 
 public class RelationBaseDeDonnees {
     // url vers la bdd
-    private final String url = "jdbc:mysql://localhost:3306/Magasin";
+    private final String url = "jdbc:mysql://localhost:3306/magasin";
     private final String user = "root";
     private final String password = "root";
-    private Connection conn;
+    public Connection conn;
 
     // Initialisation de la variable de connection a la bdd + driver
     public RelationBaseDeDonnees() {
@@ -59,10 +59,10 @@ public class RelationBaseDeDonnees {
         }
     }
 
-    public List<Composant> SelectAllWhere(String nomTable, String condition) {
+    public List<?> SelectAllWhere(String nomTable, String condition) {
         PreparedStatement stmt = null;
         ResultSet resultSet = null;
-        List<Composant> composants = new ArrayList<>();
+        List<Object> objects = new ArrayList<>();
         final String query = "SELECT * FROM " + nomTable + " WHERE " + condition;
 
         try {
@@ -70,14 +70,25 @@ public class RelationBaseDeDonnees {
             resultSet = stmt.executeQuery();
 
             while (resultSet.next()) {
-                String reference = resultSet.getString("reference");
-                String famille = resultSet.getString("famille");
-                float prix = resultSet.getFloat("prix_unitaire");
-                int quantite = resultSet.getInt("quantite_en_stock");
+                if (nomTable.equals("composants")) {
+                    String reference = resultSet.getString("reference");
+                    String famille = resultSet.getString("famille");
+                    float prix = resultSet.getFloat("prix_unitaire");
+                    int quantite = resultSet.getInt("quantite_en_stock");
 
-                Composant composant = new Composant(
-                        reference, famille , prix, quantite);
-                composants.add(composant);
+                    Composant composant = new Composant(
+                            reference, famille , prix, quantite);
+                    objects.add(composant);
+                } else if (nomTable.equals("clients")) {
+                    String nom = resultSet.getString("nom");
+                    String adresse = resultSet.getString("adresse");
+                    double total_facture = resultSet.getDouble("total_facture");
+                    String mode_paiement = resultSet.getString("mode_paiement");
+
+                    Client client = new Client(
+                            nom, adresse, total_facture, mode_paiement);
+                    objects.add(client);
+                }
             }
 
         } catch (SQLException e) {
@@ -92,9 +103,8 @@ public class RelationBaseDeDonnees {
             }
         }
 
-        return composants;
+        return objects;
     }
-
 
     // Methode pour se deconnecter de la base de donnees
     public void close() {
