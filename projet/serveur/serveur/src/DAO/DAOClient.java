@@ -1,24 +1,26 @@
 package DAO;
 
 import Models.Client;
+import datasourceManagement.MySQLManager;
 
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
 public class DAOClient extends DAOGenerique<Client> {
+    private MySQLManager mySQLManager = MySQLManager.getInstance();
+
     @Override
     public Client create(Client client) {
         try {
-            String query = "INSERT INTO clients (nom, adresse) VALUES (?, ?)";
-            PreparedStatement stmt = mySQLManager.prepareStatement(query);
-            stmt.setString(1, client.nom);
-            stmt.setString(2, client.adresse);
-            stmt.executeUpdate();
-        } catch (SQLException e) {
-            System.err.println("Erreur SQL lors de la creation d'un client : " + e.getMessage());
+            String query = "INSERT INTO clients (nom, adresse) VALUES ('"
+                    + client.nom + "', '"
+                    + client.adresse + "')";
+            mySQLManager.setData(query);
+        } catch (Exception e) {
+            System.err.println("Erreur SQL lors de la creation d'un client : "
+                    + e.getMessage());
         }
         return client;
     }
@@ -26,13 +28,13 @@ public class DAOClient extends DAOGenerique<Client> {
     @Override
     public Client update(Client client) {
         try {
-            String query = "UPDATE clients SET adresse = ?, total_facture = ?, mode_paiement = ? WHERE nom = ?";
-            PreparedStatement stmt = mySQLManager.prepareStatement(query);
-            stmt.setString(1, client.adresse);
-            stmt.setString(4, client.nom);
-            stmt.executeUpdate();
-        } catch (SQLException e) {
-            System.err.println("Erreur SQL lors de la mise à jour d'un client : " + e.getMessage());
+            String query = "UPDATE clients SET adresse = '"
+                    + client.adresse + "' WHERE nom = '"
+                    + client.nom + "'";
+            mySQLManager.setData(query);
+        } catch (Exception e) {
+            System.err.println("Erreur SQL lors de la mise à jour d'un client : "
+                    + e.getMessage());
         }
         return client;
     }
@@ -40,12 +42,12 @@ public class DAOClient extends DAOGenerique<Client> {
     @Override
     public void delete(Client client) {
         try {
-            String query = "DELETE FROM clients WHERE nom = ?";
-            PreparedStatement stmt = mySQLManager.prepareStatement(query);
-            stmt.setString(1, client.nom);
-            stmt.executeUpdate();
-        } catch (SQLException e) {
-            System.err.println("Erreur SQL lors de la suppression d'un client : " + e.getMessage());
+            String query = "DELETE FROM clients WHERE nom = '"
+                    + client.nom + "'";
+            mySQLManager.setData(query);
+        } catch (Exception e) {
+            System.err.println("Erreur SQL lors de la suppression d'un client : "
+                    + e.getMessage());
         }
     }
 
@@ -60,17 +62,36 @@ public class DAOClient extends DAOGenerique<Client> {
     public Client findById(String id) {
         Client client = null;
         try {
-            String query = "SELECT * FROM clients WHERE id = ?";
-            PreparedStatement stmt = mySQLManager.prepareStatement(query);
-            stmt.setString(1, id);
-            ResultSet rs = stmt.executeQuery();
+            String query = "SELECT * FROM clients WHERE id = '"
+                    + id + "'";
+            ResultSet rs = mySQLManager.getData(query);
             if (rs.next()) {
                 client = new Client(
                         rs.getString("nom"),
                         rs.getString("adresse"));
             }
         } catch (SQLException e) {
-            System.err.println("Erreur SQL lors de la recherche d'un client par id : " + e.getMessage());
+            System.err.println("Erreur SQL lors de la recherche d'un client par id : "
+                    + e.getMessage());
+        }
+        return client;
+    }
+
+    @Override
+    public Client findBySomeField(String nomChamp, String valeur) {
+        Client client = null;
+        try {
+            String query = "SELECT * FROM clients WHERE " + nomChamp + " = '"
+                    + valeur + "'";
+            ResultSet rs = mySQLManager.getData(query);
+            if (rs.next()) {
+                client = new Client(
+                        rs.getString("nom"),
+                        rs.getString("adresse"));
+            }
+        } catch (SQLException e) {
+            System.err.println("Erreur SQL lors de la recherche d'un client par "
+                    + nomChamp + " : " + e.getMessage());
         }
         return client;
     }
@@ -80,8 +101,7 @@ public class DAOClient extends DAOGenerique<Client> {
         List<Client> clients = new ArrayList<>();
         try {
             String query = "SELECT * FROM clients";
-            PreparedStatement stmt = mySQLManager.prepareStatement(query);
-            ResultSet rs = stmt.executeQuery();
+            ResultSet rs = mySQLManager.getData(query);
             while (rs.next()) {
                 Client client = new Client(
                         rs.getString("nom"),
@@ -89,7 +109,8 @@ public class DAOClient extends DAOGenerique<Client> {
                 clients.add(client);
             }
         } catch (SQLException e) {
-            System.err.println("Erreur SQL lors de la recherche de tous les clients : " + e.getMessage());
+            System.err.println("Erreur SQL lors de la recherche de tous les clients : "
+                    + e.getMessage());
         }
         return clients;
     }
@@ -98,10 +119,9 @@ public class DAOClient extends DAOGenerique<Client> {
     public List<Client> findByName(String name) {
         List<Client> clients = new ArrayList<>();
         try {
-            String query = "SELECT * FROM clients WHERE nom = ?";
-            PreparedStatement stmt = mySQLManager.prepareStatement(query);
-            stmt.setString(1, name);
-            ResultSet rs = stmt.executeQuery();
+            String query = "SELECT * FROM clients WHERE nom = '"
+                    + name + "'";
+            ResultSet rs = mySQLManager.getData(query);
             while (rs.next()) {
                 Client client = new Client(
                         rs.getString("nom"),
@@ -109,7 +129,8 @@ public class DAOClient extends DAOGenerique<Client> {
                 clients.add(client);
             }
         } catch (SQLException e) {
-            System.err.println("Erreur SQL lors de la recherche d'un client par nom : " + e.getMessage());
+            System.err.println("Erreur SQL lors de la recherche d'un client par nom : "
+                    + e.getMessage());
         }
         return clients;
     }
