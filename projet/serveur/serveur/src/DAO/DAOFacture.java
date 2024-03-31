@@ -17,7 +17,7 @@ public class DAOFacture extends DAOGenerique<Facture> {
     public Facture create(Facture facture) {
         try {
             String query = "INSERT INTO factures (clientId, totalFacture, modeDePaiment) VALUES ('"
-                    + facture.getClient().nom + "', "
+                    + facture.getClient().getId() + "', "
                     + facture.getTotalFacture() + ", '"
                     + facture.getModeDePaiment().toString() + "')";
             mySQLManager.setData(query);
@@ -34,7 +34,7 @@ public class DAOFacture extends DAOGenerique<Facture> {
             String query = "UPDATE factures SET totalFacture = "
                     + facture.getTotalFacture() + ", modeDePaiment = '"
                     + facture.getModeDePaiment().toString()
-                    + "' WHERE clientId = '" + facture.getClient().nom + "'";
+                    + "' WHERE clientId = " + facture.getClient().getId();
             mySQLManager.setData(query);
         } catch (Exception e) {
             System.err.println("Erreur SQL lors de la mise à jour d'une facture : "
@@ -47,7 +47,7 @@ public class DAOFacture extends DAOGenerique<Facture> {
     public void delete(Facture facture) {
         try {
             String query = "DELETE FROM factures WHERE clientId = '"
-                    + facture.getClient().nom + "'";
+                    + facture.getClient().getId() + "'";
             mySQLManager.setData(query);
         } catch (Exception e) {
             System.err.println("Erreur SQL lors de la suppression d'une facture : "
@@ -105,6 +105,28 @@ public class DAOFacture extends DAOGenerique<Facture> {
     }
 
     @Override
+    public List<Facture> findAllBySomeField(String fieldName, String valeur) {
+        List<Facture> factures = new ArrayList<>();
+        try {
+            String query = "SELECT * FROM factures WHERE "
+                    + fieldName + " = '" + valeur + "'";
+            ResultSet rs = mySQLManager.getData(query);
+            while (rs.next()) {
+                Client client = new DAOClient().findById(rs.getString("clientId"));
+                Facture facture = new Facture(
+                        client,
+                        rs.getDouble("totalFacture"),
+                        EnumModeDePaiment.valueOf(rs.getString("modeDePaiment")));
+                factures.add(facture);
+            }
+        } catch (SQLException e) {
+            System.err.println("Erreur SQL lors de la recherche de factures par "
+                    + fieldName + " : " + e.getMessage());
+        }
+        return factures;
+    }
+
+    @Override
     public List<Facture> findAll() {
         List<Facture> factures = new ArrayList<>();
         try {
@@ -130,7 +152,7 @@ public class DAOFacture extends DAOGenerique<Facture> {
         List<Facture> factures = new ArrayList<>();
         try {
             String query = "SELECT * FROM factures WHERE clientId = '"
-                    + new DAOClient().findByName(name).get(0).nom + "'";
+                    + new DAOClient().findBySomeField("nom", name).getNom() + "'";
             ResultSet rs = mySQLManager.getData(query);
             while (rs.next()) {
                 Client client = new DAOClient().findById(rs.getString("clientId"));

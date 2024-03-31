@@ -31,6 +31,9 @@ public class Facture implements Remote {
     public void setTotalFacture(double totalFacture) {
         this.totalFacture = totalFacture;
     }
+    public void setModeDePaiment(EnumModeDePaiment modeDePaiment) {
+        this.modeDePaiment = modeDePaiment;
+    }
     public Client getClient() {
         return client;
     }

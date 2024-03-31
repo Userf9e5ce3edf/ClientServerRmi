@@ -1,13 +1,18 @@
 package Models;
 
 public class Client {
-    public int id;
-    public final String nom;
-    public final String adresse;
+    private int id;
+    private final String nom;
+    private final String adresse;
 
     public Client(final String nom, final String adresse) {
         this.nom = nom;
         this.adresse = adresse;
+    }
+    public Client(final String nom, final String adresse, final int id) {
+        this.nom = nom;
+        this.adresse = adresse;
+        this.id = id;
     }
 
     public String getNom() {

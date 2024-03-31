@@ -15,8 +15,8 @@ public class DAOClient extends DAOGenerique<Client> {
     public Client create(Client client) {
         try {
             String query = "INSERT INTO clients (nom, adresse) VALUES ('"
-                    + client.nom + "', '"
-                    + client.adresse + "')";
+                    + client.getNom() + "', '"
+                    + client.getAdresse() + "')";
             mySQLManager.setData(query);
         } catch (Exception e) {
             System.err.println("Erreur SQL lors de la creation d'un client : "
@@ -29,8 +29,8 @@ public class DAOClient extends DAOGenerique<Client> {
     public Client update(Client client) {
         try {
             String query = "UPDATE clients SET adresse = '"
-                    + client.adresse + "' WHERE nom = '"
-                    + client.nom + "'";
+                    + client.getAdresse() + "' WHERE nom = '"
+                    + client.getNom() + "'";
             mySQLManager.setData(query);
         } catch (Exception e) {
             System.err.println("Erreur SQL lors de la mise à jour d'un client : "
@@ -43,7 +43,7 @@ public class DAOClient extends DAOGenerique<Client> {
     public void delete(Client client) {
         try {
             String query = "DELETE FROM clients WHERE nom = '"
-                    + client.nom + "'";
+                    + client.getNom() + "'";
             mySQLManager.setData(query);
         } catch (Exception e) {
             System.err.println("Erreur SQL lors de la suppression d'un client : "
@@ -68,7 +68,8 @@ public class DAOClient extends DAOGenerique<Client> {
             if (rs.next()) {
                 client = new Client(
                         rs.getString("nom"),
-                        rs.getString("adresse"));
+                        rs.getString("adresse"),
+                        rs.getInt("id"));
             }
         } catch (SQLException e) {
             System.err.println("Erreur SQL lors de la recherche d'un client par id : "
@@ -87,13 +88,36 @@ public class DAOClient extends DAOGenerique<Client> {
             if (rs.next()) {
                 client = new Client(
                         rs.getString("nom"),
-                        rs.getString("adresse"));
+                        rs.getString("adresse"),
+                        rs.getInt("id"));
+
             }
         } catch (SQLException e) {
             System.err.println("Erreur SQL lors de la recherche d'un client par "
                     + nomChamp + " : " + e.getMessage());
         }
         return client;
+    }
+
+    @Override
+    public List<Client> findAllBySomeField(String fieldName, String valeur) {
+        List<Client> clients = new ArrayList<>();
+        try {
+            String query = "SELECT * FROM clients WHERE "
+                    + fieldName + " = '" + valeur + "'";
+            ResultSet rs = mySQLManager.getData(query);
+            while (rs.next()) {
+                Client client = new Client(
+                        rs.getString("nom"),
+                        rs.getString("adresse"),
+                        rs.getInt("id"));
+                clients.add(client);
+            }
+        } catch (SQLException e) {
+            System.err.println("Erreur SQL lors de la recherche de clients par "
+                    + fieldName + " : " + e.getMessage());
+        }
+        return clients;
     }
 
     @Override
@@ -105,7 +129,8 @@ public class DAOClient extends DAOGenerique<Client> {
             while (rs.next()) {
                 Client client = new Client(
                         rs.getString("nom"),
-                        rs.getString("adresse"));
+                        rs.getString("adresse"),
+                        rs.getInt("id"));
                 clients.add(client);
             }
         } catch (SQLException e) {
@@ -125,7 +150,8 @@ public class DAOClient extends DAOGenerique<Client> {
             while (rs.next()) {
                 Client client = new Client(
                         rs.getString("nom"),
-                        rs.getString("adresse"));
+                        rs.getString("adresse"),
+                        rs.getInt("id"));
                 clients.add(client);
             }
         } catch (SQLException e) {

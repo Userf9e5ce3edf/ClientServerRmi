@@ -108,6 +108,28 @@ public class DAOComposant extends DAOGenerique<Composant> {
     }
 
     @Override
+    public List<Composant> findAllBySomeField(String fieldName, String valeur) {
+        List<Composant> composants = new ArrayList<>();
+        try {
+            String query = "SELECT * FROM composants WHERE " + fieldName + " = '" + valeur + "'";
+            ResultSet rs = mySQLManager.getData(query);
+            while (rs.next()) {
+                Composant composant = new Composant(
+                        rs.getString("reference"),
+                        rs.getString("famille"),
+                        rs.getFloat("prix"),
+                        rs.getInt("quantite"));
+                composant.setId(rs.getInt("id"));
+                composants.add(composant);
+            }
+        } catch (SQLException e) {
+            System.err.println("Erreur SQL lors de la recherche de composants par "
+                    + fieldName + " : " + e.getMessage());
+        }
+        return composants;
+    }
+
+    @Override
     public List<Composant> findAll() {
         List<Composant> composants = new ArrayList<>();
         try {

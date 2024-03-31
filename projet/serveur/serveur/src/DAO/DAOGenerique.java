@@ -13,6 +13,7 @@ public abstract class DAOGenerique<T> {
     public abstract void saveAll(List<T> obj);
     public abstract T findById(String cle);
     public abstract T findBySomeField(String fieldName,String valeur);
+    public abstract List<T> findAllBySomeField(String fieldName,String valeur);
     public abstract List<T> findAll();
     public abstract List<T> findByName(String name);
 }

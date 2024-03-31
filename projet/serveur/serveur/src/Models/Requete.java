@@ -21,7 +21,7 @@ public class Requete implements IRequete {
 
     @Override
     public List<String> RechercheComposant(String famille) throws RemoteException {
-        List<Composant> composants = daoComposant.findByName(famille);
+        List<Composant> composants = daoComposant.findAllBySomeField("famille", famille);
         List<String> references = new ArrayList<>();
         for (Composant composant : composants) {
             if (composant.quantite > 0) {
@@ -34,9 +34,19 @@ public class Requete implements IRequete {
     @Override
     public boolean acheterComposant(String refComposant, int quantite, String nomClient) throws RemoteException {
         Composant composant = daoComposant.findBySomeField("reference",refComposant);
-        if (composant != null && composant.quantite >= quantite) {
+        Client client = daoClient.findBySomeField("nom", nomClient);
+        if (composant != null && composant.quantite >= quantite && client != null) {
             composant.quantite -= quantite;
             daoComposant.update(composant);
+
+            Facture facture = daoFacture.findBySomeField("clientId", String.valueOf(client.getId()));
+            if (facture == null) {
+                facture = new Facture(client, 0, EnumModeDePaiment.NON_DEFINI);
+                daoFacture.create(facture);
+            }
+            facture.setTotalFacture(facture.getTotalFacture() + composant.prix * quantite);
+            daoFacture.update(facture);
+
             return true;
         }
         return false;
@@ -54,17 +64,20 @@ public class Requete implements IRequete {
     }
 
     @Override
-    public boolean payerFacture(String nomClient, double montant) throws RemoteException {
+    public boolean payerFacture(String nomClient, double montant, EnumModeDePaiment modeDePaiment) throws RemoteException {
         Client client = daoClient.findBySomeField("nom", nomClient);
+        System.out.println("client: " + client);
         if (client != null) {
             Facture facture = daoFacture.findBySomeField("clientId",
                     String.valueOf(client.getId()));
+            System.out.println("facture: " + facture);
             if (facture != null && facture.getTotalFacture() >= montant) {
                 double newTotal = facture.getTotalFacture() - montant;
                 if (newTotal < 0) {
-                    return false; // montant insuffisant
+                    return false; // trop payer
                 }
                 facture.setTotalFacture(newTotal);
+                facture.setModeDePaiment(modeDePaiment);
                 daoFacture.update(facture);
                 return true;
             }
