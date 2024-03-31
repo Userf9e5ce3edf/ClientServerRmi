@@ -11,65 +11,66 @@ public class ClientDistant {
 
     public static void main(String[] args) {
         try {
-            // Retrieve the registry
             Registry reg = LocateRegistry.getRegistry(null);
-
-            // Look up the remote object in the registry
             IRequete stub = (IRequete) reg.lookup("Hello");
 
             Scanner scanner = new Scanner(System.in);
             while (true) {
-                System.out.println("Please select an operation:");
-                System.out.println("1. VoirStock");
-                System.out.println("2. RechercheComposant");
-                System.out.println("3. acheterComposant");
-                System.out.println("4. ajouterComposant");
-                System.out.println("5. payerFacture");
-                System.out.println("6. ConsulterFacture");
-                System.out.println("7. Exit");
+                System.out.println("Choisir une operation:");
+                System.out.println("1. Voir le stock d'un composant");
+                System.out.println("2. Recherche composants par famille");
+                System.out.println("3. acheter un composant");
+                System.out.println("4. ajouter un composant");
+                System.out.println("5. payer une facture");
+                System.out.println("6. consulter facture");
+                System.out.println("7. Quitter");
 
                 int choice = scanner.nextInt();
-                scanner.nextLine(); // consume newline left-over
+                scanner.nextLine();
                 switch (choice) {
                     case 1:
-                        System.out.println("Enter the reference of the component:");
+                        System.out.println("Saisir la reference du composant:");
                         String refComposant = scanner.nextLine();
                         String stock = stub.VoirStock(refComposant);
                         System.out.println("Stock: " + stock);
                         break;
                     case 2:
-                        System.out.println("Enter the family of the component:");
+                        System.out.println("saisir la famile du composant:");
                         String famille = scanner.nextLine();
                         List<String> composants = stub.RechercheComposant(famille);
                         System.out.println("Composants: " + composants);
                         break;
                     case 3:
-                        System.out.println("Enter the reference of the component:");
+                        System.out.println("saisir la reference du composant:");
                         String refComposantAchat = scanner.nextLine();
-                        System.out.println("Enter the quantity:");
+                        System.out.println("saisir la quantité:");
                         int quantite = scanner.nextInt();
-                        scanner.nextLine(); // consume newline left-over
-                        System.out.println("Enter the client name:");
+                        scanner.nextLine();
+                        System.out.println("saisir le nom du client:");
                         String nomClientAchat = scanner.nextLine();
                         boolean purchaseResult = stub.acheterComposant(refComposantAchat, quantite, nomClientAchat);
-                        System.out.println("Purchase result: " + purchaseResult);
+                        if(purchaseResult) {
+                            System.out.println("achat reussi");
+                        } else {
+                            System.out.println("achat echoué");
+                        }
                         break;
                     case 4:
-                        System.out.println("Enter the reference of the component:");
+                        System.out.println("saisir la reference du composant:");
                         String refComposantAjout = scanner.nextLine();
-                        System.out.println("Enter the quantity:");
+                        System.out.println("saisir la quantité:");
                         int quantiteAjout = scanner.nextInt();
                         scanner.nextLine(); // consume newline left-over
                         boolean addResult = stub.ajouterComposant(refComposantAjout, quantiteAjout);
-                        System.out.println("Add component result: " + addResult);
+                        System.out.println("Resultat de l'ajout du composant: " + addResult);
                         break;
                     case 5:
-                        System.out.println("Enter the client name:");
+                        System.out.println("saisir le nom du client:");
                         String nomClientPaiement = scanner.nextLine();
-                        System.out.println("Enter the amount:");
+                        System.out.println("saisir le montant:");
                         double montant = scanner.nextDouble();
                         scanner.nextLine(); // consume newline left-over
-                        System.out.println("Choose a payment method:");
+                        System.out.println("choisir un moyen de paiment:");
                         System.out.println("1. CARTEBANCAIRE");
                         System.out.println("2. ESPECE");
                         System.out.println("3. VIREMENT");
@@ -87,24 +88,28 @@ public class ClientDistant {
                                 modeDePaiment = EnumModeDePaiment.VIREMENT;
                                 break;
                             default:
-                                System.out.println("Invalid choice. Defaulting to CARTEBANCAIRE.");
+                                System.out.println("choix invalide. mode par default CARTEBANCAIRE.");
                                 modeDePaiment = EnumModeDePaiment.CARTEBANCAIRE;
                         }
                         boolean paymentResult = stub.payerFacture(nomClientPaiement, montant, modeDePaiment);
-                        System.out.println("Payment result: " + paymentResult);
+                        if(paymentResult) {
+                            System.out.println("paiment reussi");
+                        } else {
+                            System.out.println("paiment echoué");
+                        }
                         break;
                     case 6:
-                        System.out.println("Enter the client name:");
+                        System.out.println("saisir le nom du client:");
                         String nomClientFacture = scanner.nextLine();
                         String facture = stub.ConsulterFacture(nomClientFacture);
                         System.out.println("Facture: " + facture);
                         break;
                     case 7:
-                        System.out.println("Exiting...");
+                        System.out.println("Fermeture...");
                         scanner.close();
                         return;
                     default:
-                        System.out.println("Invalid choice. Please enter a number between 1 and 7.");
+                        System.out.println("choix invalide. Saisir un nombre entre 1 et 7.");
                 }
             }
         } catch (Exception e) {
