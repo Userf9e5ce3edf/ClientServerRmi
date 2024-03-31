@@ -1,7 +1,8 @@
 package Models;
-public enum ENUMModeDePaiment {
+public enum EnumModeDePaiment {
     CARTEBANCAIRE,
     ESPECE,
+    NON_DEFINI,
     VIREMENT
 
 }

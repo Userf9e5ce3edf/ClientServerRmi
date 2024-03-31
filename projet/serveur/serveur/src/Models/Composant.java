@@ -1,6 +1,7 @@
 package Models;
 
 public class Composant {
+    public int id;
     public String reference;
     public String famille;
     public float prix;
@@ -10,6 +11,25 @@ public class Composant {
         this.famille = famille;
         this.prix = prix;
         this.quantite = quantite;
+    }
+
+    public String getReference() {
+        return reference;
+    }
+    public String getFamille() {
+        return famille;
+    }
+    public float getPrix() {
+        return prix;
+    }
+    public int getQuantite() {
+        return quantite;
+    }
+    public int getId() {
+        return id;
+    }
+    public void setId(int id) {
+        this.id = id;
     }
 
     @Override

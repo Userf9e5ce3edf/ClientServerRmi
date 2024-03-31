@@ -1,16 +1,31 @@
 package Models;
 
 public class Client {
-    public String nom;
-    public String adresse;
-    public double total_facture;
-    public String mode_paiement;
+    private int id;
+    private final String nom;
+    private final String adresse;
 
-    public Client(String nom, String adresse, double total_facture, String mode_paiement) {
+    public Client(final String nom, final String adresse) {
         this.nom = nom;
         this.adresse = adresse;
-        this.total_facture = total_facture;
-        this.mode_paiement = mode_paiement;
+    }
+    public Client(final String nom, final String adresse, final int id) {
+        this.nom = nom;
+        this.adresse = adresse;
+        this.id = id;
+    }
+
+    public String getNom() {
+        return nom;
+    }
+    public String getAdresse() {
+        return adresse;
+    }
+    public int getId() {
+        return id;
+    }
+    public void setId(int id) {
+        this.id = id;
     }
 
     @Override
@@ -18,8 +33,6 @@ public class Client {
         final StringBuilder sb = new StringBuilder("Client{");
         sb.append("nom='").append(nom).append('\'');
         sb.append(", adresse='").append(adresse).append('\'');
-        sb.append(", total_facture=").append(total_facture);
-        sb.append(", mode_paiement='").append(mode_paiement).append('\'');
         sb.append('}');
         return sb.toString();
     }
