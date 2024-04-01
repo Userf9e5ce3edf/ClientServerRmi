@@ -7,7 +7,6 @@ import java.rmi.server.UnicastRemoteObject;
 
 public class Serveur {
 
-
     public static void main(String args[]) {
         try {
             Requete obj = new Requete();
