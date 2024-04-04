@@ -60,6 +60,7 @@ public class PageClients extends JFrame {
                 try {
                     clientDistant.stub.createClient(nom, adresse);
                     RefreshListeClients();
+                    ClearFields();
                 } catch (RemoteException ex) {
                     JOptionPane.showMessageDialog(
                             PageClients.this, "Erreur lors de l'ajout du client: " +
@@ -74,6 +75,7 @@ public class PageClients extends JFrame {
                     try {
                         clientDistant.stub.deleteClient(clients.get(ClientList.getSelectedIndex()).getId());
                         RefreshListeClients();
+                        ClearFields();
                     } catch (RemoteException ex) {
                         JOptionPane.showMessageDialog(
                                 PageClients.this, "Erreur lors de la suppression du client: " +
@@ -92,6 +94,7 @@ public class PageClients extends JFrame {
                     try {
                         clientDistant.stub.updateClient(id, nom, adresse);
                         RefreshListeClients();
+                        ClearFields();
                     } catch (RemoteException ex) {
                         JOptionPane.showMessageDialog(
                                 PageClients.this, "Erreur lors de la modification du client: " +
@@ -100,6 +103,12 @@ public class PageClients extends JFrame {
                 }
             }
         });
+    }
+
+    private void ClearFields() {
+        NomtextField.setText("");
+        PrenomtextField.setText("");
+        AdressetextField.setText("");
     }
 
     private void RefreshListeClients() {
