@@ -10,6 +10,7 @@ public class Client implements IClient, Serializable {
     private static final long serialVersionUID = 1L;
     private int id;
     private String nom;
+    private String prenom;
     private String adresse;
 
     public Client(final String nom, final String adresse) {

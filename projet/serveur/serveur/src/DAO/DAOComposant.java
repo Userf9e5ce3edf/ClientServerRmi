@@ -67,7 +67,7 @@ public class DAOComposant extends DAOGenerique<Composant> {
     public Composant findById(String id) {
         Composant composant = null;
         try {
-            String query = "SELECT * FROM composants WHERE reference = '"
+            String query = "SELECT * FROM composants WHERE id = '"
                     + id + "'";
             ResultSet rs = mySQLManager.getData(query);
             if (rs.next()) {

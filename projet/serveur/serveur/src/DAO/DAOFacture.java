@@ -15,16 +15,19 @@ public class DAOFacture extends DAOGenerique<Facture> {
 
     @Override
     public Facture create(Facture facture) {
+        int id = -1;
         try {
             String query = "INSERT INTO factures (clientId, totalFacture, modeDePaiment) VALUES ('"
                     + facture.getClient().getId() + "', "
                     + facture.getTotalFacture() + ", '"
                     + facture.getModeDePaiment().toString() + "')";
-            mySQLManager.setData(query);
+            id = mySQLManager.setData(query);
         } catch (Exception e) {
             System.err.println("Erreur SQL lors de la creation d'une facture : "
                     + e.getMessage());
         }
+
+        facture.setId(id);
         return facture;
     }
 
@@ -33,7 +36,8 @@ public class DAOFacture extends DAOGenerique<Facture> {
         try {
             String query = "UPDATE factures SET totalFacture = "
                     + facture.getTotalFacture() + ", modeDePaiment = '"
-                    + facture.getModeDePaiment().toString()
+                    + facture.getModeDePaiment().toString() + "', statutFacture = '"
+                    + facture.getStatutFacture().toString()
                     + "' WHERE clientId = " + facture.getClient().getId();
             mySQLManager.setData(query);
         } catch (Exception e) {
@@ -93,6 +97,7 @@ public class DAOFacture extends DAOGenerique<Facture> {
             if (rs.next()) {
                 Client client = new DAOClient().findById(rs.getString("clientId"));
                 facture = new Facture(
+                        rs.getInt("id"),
                         client,
                         rs.getDouble("totalFacture"),
                         EnumModeDePaiment.valueOf(rs.getString("modeDePaiment")));
@@ -114,6 +119,7 @@ public class DAOFacture extends DAOGenerique<Facture> {
             while (rs.next()) {
                 Client client = new DAOClient().findById(rs.getString("clientId"));
                 Facture facture = new Facture(
+                        rs.getInt("id"),
                         client,
                         rs.getDouble("totalFacture"),
                         EnumModeDePaiment.valueOf(rs.getString("modeDePaiment")));
@@ -135,6 +141,7 @@ public class DAOFacture extends DAOGenerique<Facture> {
             while (rs.next()) {
                 Client client = new DAOClient().findById(rs.getString("clientId"));
                 Facture facture = new Facture(
+                        rs.getInt("id"),
                         client,
                         rs.getDouble("totalFacture"),
                         EnumModeDePaiment.valueOf(rs.getString("modeDePaiment")));
@@ -157,6 +164,7 @@ public class DAOFacture extends DAOGenerique<Facture> {
             while (rs.next()) {
                 Client client = new DAOClient().findById(rs.getString("clientId"));
                 Facture facture = new Facture(
+                        rs.getInt("id"),
                         client,
                         rs.getDouble("totalFacture"),
                         EnumModeDePaiment.valueOf(rs.getString("modeDePaiment")));

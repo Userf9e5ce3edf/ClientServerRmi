@@ -1,6 +1,8 @@
 package DAO;
 
 import Models.Client;
+import Models.Facture;
+import Models.FactureItem;
 import datasourceManagement.MySQLManager;
 
 import java.sql.ResultSet;
@@ -28,9 +30,10 @@ public class DAOClient extends DAOGenerique<Client> {
     @Override
     public Client update(Client client) {
         try {
-            String query = "UPDATE clients SET adresse = '"
-                    + client.getAdresse() + "' WHERE nom = '"
-                    + client.getNom() + "'";
+            String query = "UPDATE clients SET "
+                    + "nom = '" + client.getNom()
+                    + "', adresse = '"  + client.getAdresse()
+                    + "' WHERE id = " + client.getId();
             mySQLManager.setData(query);
         } catch (Exception e) {
             System.err.println("Erreur SQL lors de la mise à jour d'un client : "
@@ -42,8 +45,16 @@ public class DAOClient extends DAOGenerique<Client> {
     @Override
     public void delete(Client client) {
         try {
-            String query = "DELETE FROM clients WHERE nom = '"
-                    + client.getNom() + "'";
+            DAOFacture daoFacture = new DAOFacture();
+            Facture facture = daoFacture
+                    .findBySomeField("clientId", String.valueOf(client.getId()));
+
+            String query = "DELETE FROM factureItems WHERE idfacture = "
+                    + facture.getId() + ";"
+                    + "DELETE FROM factures WHERE id = "
+                    + facture.getId() + ";"
+                    + "DELETE FROM clients WHERE id = "
+                    + client.getId() + ";";
             mySQLManager.setData(query);
         } catch (Exception e) {
             System.err.println("Erreur SQL lors de la suppression d'un client : "
