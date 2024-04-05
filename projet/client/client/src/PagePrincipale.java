@@ -29,7 +29,10 @@ public class PagePrincipale extends JFrame {
         achatsButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                // Handle Achats button click
+                PageAchat pageAchat = new PageAchat();
+                pageAchat.setVisible(true);
+
+                dispose();
             }
         });
 

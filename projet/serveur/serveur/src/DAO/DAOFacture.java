@@ -26,7 +26,6 @@ public class DAOFacture extends DAOGenerique<Facture> {
             System.err.println("Erreur SQL lors de la creation d'une facture : "
                     + e.getMessage());
         }
-
         facture.setId(id);
         return facture;
     }
@@ -76,6 +75,7 @@ public class DAOFacture extends DAOGenerique<Facture> {
             if (rs.next()) {
                 Client client = new DAOClient().findById(rs.getString("clientId"));
                 facture = new Facture(
+                        rs.getInt("id"),
                         client,
                         rs.getDouble("totalFacture"),
                         EnumModeDePaiment.valueOf(rs.getString("modeDePaiment")));

@@ -5,6 +5,7 @@ import java.io.Serializable;
 import java.rmi.Remote;
 
 public class FactureItem implements Remote, Serializable {
+
     @Serial
     private static final long serialVersionUID = 4L;
     private int id;
@@ -12,14 +13,14 @@ public class FactureItem implements Remote, Serializable {
     private Facture facture;
     private int quantite;
 
-    public FactureItem(int id, Composant composant, Models.Facture facture, int quantite) {
+    public FactureItem(int id, Composant composant, Facture facture, int quantite) {
         this.id = id;
         this.composant = composant;
         this.facture = facture;
         this.quantite = quantite;
     }
 
-    public FactureItem(Composant composant, Models.Facture facture, int quantite) {
+    public FactureItem(Composant composant, Facture facture, int quantite) {
         this.composant = composant;
         this.facture = facture;
         this.quantite = quantite;
@@ -55,15 +56,5 @@ public class FactureItem implements Remote, Serializable {
 
     public void setId(int id) {
         this.id = id;
-    }
-
-    @Override
-    public String toString() {
-        return "FactureItem{" +
-                "id=" + id +
-                ", composant=" + composant +
-                ", facture=" + facture +
-                ", quantite=" + quantite +
-                '}';
     }
 }

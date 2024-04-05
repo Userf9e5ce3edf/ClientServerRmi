@@ -152,6 +152,49 @@ public class Requete implements IRequete, Serializable {
         return factureDetails.toString();
     }
 
+    @Override
+    public Facture getFacture(int idClient) throws RemoteException {
+        return daoFacture.findBySomeField("clientId", String.valueOf(idClient));
+    }
+
+    @Override
+    public List<FactureItem> getAllFactureItem(int idFacture) throws RemoteException {
+        return daoFactureItem.findAllBySomeField("idfacture", String.valueOf(idFacture));
+    }
+    @Override
+    public boolean retirerDuPanier(int quantite, int  id) throws RemoteException {
+        FactureItem factureItem = daoFactureItem.findById(String.valueOf(id));
+        if (factureItem != null) {
+            Composant composant = factureItem.getComposant();
+            composant.quantite += quantite;
+            daoComposant.update(composant);
+
+            // Update the totalFacture of the Facture
+            double costOfRemovedItems = factureItem.getComposant().getPrix() * quantite;
+
+            System.out.println("costOfRemovedItems: " + costOfRemovedItems);
+
+            Facture facture = daoFacture.findById(String.valueOf(factureItem.getFacture().getId()));
+
+            System.out.println(facture.toString());
+
+            facture.setTotalFacture(facture.getTotalFacture() - costOfRemovedItems);
+            Facture test = daoFacture.update(facture);
+
+            System.out.println("caca" + test.toString());
+
+            // Update the quantity of the FactureItem, delete only if the quantity is 0
+            factureItem.setQuantite(factureItem.getQuantite() - quantite);
+            if (factureItem.getQuantite() == 0) {
+                daoFactureItem.delete(factureItem);
+            } else {
+                daoFactureItem.update(factureItem);
+            }
+            return true;
+        }
+        return false;
+    }
+
     // CRUD operations pour Client
     @Override
     public Client createClient(String nom, String adresse) {

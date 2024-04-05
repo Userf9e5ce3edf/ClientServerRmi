@@ -1,8 +1,6 @@
 package Interfaces;
 
-import Models.Client;
-import Models.Composant;
-import Models.EnumModeDePaiment;
+import Models.*;
 
 import java.rmi.Remote;
 import java.rmi.RemoteException;
@@ -13,7 +11,6 @@ import java.util.Map;
 
 public interface IRequete extends Remote {
     public String VoirStock(String refComposant) throws RemoteException;
-
     public List<String> GetAllFamilles() throws RemoteException;
     public List<Composant> RechercheComposant(String famille) throws RemoteException;
     /*
@@ -42,7 +39,9 @@ public interface IRequete extends Remote {
    public  boolean retirerComposantDuStock(String refComposant, int quantite) throws RemoteException;
     public boolean payerFacture(String nomClient, EnumModeDePaiment modeDePaiment) throws RemoteException;
     public String ConsulterFacture(String nomClient) throws RemoteException;
-
+    public Facture getFacture(int idClient) throws RemoteException;
+    public List<FactureItem> getAllFactureItem(int idFacture) throws RemoteException;
+    public boolean retirerDuPanier(int quantite, int  id) throws RemoteException;
     // CRUD operations for Client
     public Client createClient(String nom, String adresse) throws RemoteException;
     public boolean deleteClient(int id) throws RemoteException;

@@ -1,8 +1,12 @@
 package Models;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 public class Composant implements Serializable {
+
+    @Serial
+    private static final long serialVersionUID = 2L;
     public int id;
     public String reference;
     public String famille;
