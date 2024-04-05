@@ -173,4 +173,19 @@ public class DAOComposant extends DAOGenerique<Composant> {
         }
         return composants;
     }
+
+    public List<String> findAllFamilles() {
+        List<String> familles = new ArrayList<>();
+        try {
+            String query = "SELECT DISTINCT famille FROM composants";
+            ResultSet rs = mySQLManager.getData(query);
+            while (rs.next()) {
+                familles.add(rs.getString("famille"));
+            }
+        } catch (SQLException e) {
+            System.err.println("Erreur SQL lors de la recherche de toutes les familles : "
+                    + e.getMessage());
+        }
+        return familles;
+    }
 }

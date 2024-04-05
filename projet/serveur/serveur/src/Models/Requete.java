@@ -22,15 +22,20 @@ public class Requete implements IRequete, Serializable {
         return composant != null ? composant.toString() : null;
     }
     @Override
-    public List<String> RechercheComposant(String famille) throws RemoteException {
+    public List<String> GetAllFamilles() {
+        List<String> familles = daoComposant.findAllFamilles();
+        return familles;
+    }
+    @Override
+    public List<Composant> RechercheComposant(String famille) throws RemoteException {
         List<Composant> composants = daoComposant.findAllBySomeField("famille", famille);
-        List<String> references = new ArrayList<>();
+        List<Composant> availableComposants = new ArrayList<>();
         for (Composant composant : composants) {
             if (composant.quantite > 0) {
-                references.add(composant.reference);
+                availableComposants.add(composant);
             }
         }
-        return references;
+        return availableComposants;
     }
     @Override
     public boolean ajouterAuPanier(String refComposant, int quantite, String nomClient) throws RemoteException {

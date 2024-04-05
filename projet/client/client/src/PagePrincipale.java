@@ -19,7 +19,6 @@ public class PagePrincipale extends JFrame {
         clientsButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                JOptionPane.showMessageDialog(PagePrincipale.this, "Clients button clicked");
                 PageClients pageClients = new PageClients();
                 pageClients.setVisible(true);
 
@@ -37,7 +36,10 @@ public class PagePrincipale extends JFrame {
         gererLeStockButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                // Handle GererLeStock button click
+                GestionStock gestionStock = new GestionStock();
+                gestionStock.setVisible(true);
+
+                dispose();
             }
         });
     }

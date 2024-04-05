@@ -1,18 +1,21 @@
 package Interfaces;
 
 import Models.Client;
+import Models.Composant;
 import Models.EnumModeDePaiment;
 
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Dictionary;
-import java.util.List;
+import java.util.*;
 import java.util.Map;
 
 public interface IRequete extends Remote {
     public String VoirStock(String refComposant) throws RemoteException;
-    public List<String> RechercheComposant(String famille) throws RemoteException;
+
+    public List<String> GetAllFamilles() throws RemoteException;
+    public List<Composant> RechercheComposant(String famille) throws RemoteException;
     /*
      * Ajouter un composant au panier
      * @param refComposant : reference du composant
