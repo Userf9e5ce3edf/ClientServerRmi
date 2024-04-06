@@ -1,5 +1,6 @@
 package DAO;
 
+import Models.EnumStatutFacture;
 import Models.Facture;
 import Models.Client;
 import Models.EnumModeDePaiment;
@@ -17,10 +18,11 @@ public class DAOFacture extends DAOGenerique<Facture> {
     public Facture create(Facture facture) {
         int id = -1;
         try {
-            String query = "INSERT INTO factures (clientId, totalFacture, modeDePaiment) VALUES ('"
+            String query = "INSERT INTO factures (clientId, totalFacture, modeDePaiment, statutFacture) VALUES ('"
                     + facture.getClient().getId() + "', "
                     + facture.getTotalFacture() + ", '"
-                    + facture.getModeDePaiment().toString() + "')";
+                    + facture.getModeDePaiment().toString() + "', '"
+                    + facture.getStatutFacture().toString() + "')";
             id = mySQLManager.setData(query);
         } catch (Exception e) {
             System.err.println("Erreur SQL lors de la creation d'une facture : "
@@ -37,7 +39,7 @@ public class DAOFacture extends DAOGenerique<Facture> {
                     + facture.getTotalFacture() + ", modeDePaiment = '"
                     + facture.getModeDePaiment().toString() + "', statutFacture = '"
                     + facture.getStatutFacture().toString()
-                    + "' WHERE clientId = " + facture.getClient().getId();
+                    + "' WHERE id = " + facture.getId();
             mySQLManager.setData(query);
         } catch (Exception e) {
             System.err.println("Erreur SQL lors de la mise à jour d'une facture : "
@@ -79,6 +81,8 @@ public class DAOFacture extends DAOGenerique<Facture> {
                         client,
                         rs.getDouble("totalFacture"),
                         EnumModeDePaiment.valueOf(rs.getString("modeDePaiment")));
+                facture.setStatutFacture(
+                        EnumStatutFacture.valueOf(rs.getString("statutFacture")));
             }
         } catch (SQLException e) {
             System.err.println("Erreur SQL lors de la recherche d'une facture par id : "
@@ -100,7 +104,12 @@ public class DAOFacture extends DAOGenerique<Facture> {
                         rs.getInt("id"),
                         client,
                         rs.getDouble("totalFacture"),
-                        EnumModeDePaiment.valueOf(rs.getString("modeDePaiment")));
+                        EnumModeDePaiment.valueOf(
+                                rs.getString("modeDePaiment"))
+                        );
+                facture.setStatutFacture(
+                        EnumStatutFacture.valueOf(rs.getString("statutFacture")));
+
             }
         } catch (SQLException e) {
             System.err.println("Erreur SQL lors de la recherche d'une facture par "
@@ -123,6 +132,8 @@ public class DAOFacture extends DAOGenerique<Facture> {
                         client,
                         rs.getDouble("totalFacture"),
                         EnumModeDePaiment.valueOf(rs.getString("modeDePaiment")));
+                facture.setStatutFacture(
+                        EnumStatutFacture.valueOf(rs.getString("statutFacture")));
                 factures.add(facture);
             }
         } catch (SQLException e) {
@@ -145,6 +156,8 @@ public class DAOFacture extends DAOGenerique<Facture> {
                         client,
                         rs.getDouble("totalFacture"),
                         EnumModeDePaiment.valueOf(rs.getString("modeDePaiment")));
+                facture.setStatutFacture(
+                        EnumStatutFacture.valueOf(rs.getString("statutFacture")));
                 factures.add(facture);
             }
         } catch (SQLException e) {
@@ -168,6 +181,8 @@ public class DAOFacture extends DAOGenerique<Facture> {
                         client,
                         rs.getDouble("totalFacture"),
                         EnumModeDePaiment.valueOf(rs.getString("modeDePaiment")));
+                facture.setStatutFacture(
+                        EnumStatutFacture.valueOf(rs.getString("statutFacture")));
                 factures.add(facture);
             }
         } catch (SQLException e) {

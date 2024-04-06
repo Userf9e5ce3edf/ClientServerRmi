@@ -16,8 +16,9 @@ public class DAOClient extends DAOGenerique<Client> {
     @Override
     public Client create(Client client) {
         try {
-            String query = "INSERT INTO clients (nom, adresse) VALUES ('"
+            String query = "INSERT INTO clients (nom, prenom, adresse) VALUES ('"
                     + client.getNom() + "', '"
+                    + client.getPrenom() + "', '"
                     + client.getAdresse() + "')";
             mySQLManager.setData(query);
         } catch (Exception e) {
@@ -32,6 +33,7 @@ public class DAOClient extends DAOGenerique<Client> {
         try {
             String query = "UPDATE clients SET "
                     + "nom = '" + client.getNom()
+                    + "', prenom = '" + client.getPrenom()
                     + "', adresse = '"  + client.getAdresse()
                     + "' WHERE id = " + client.getId();
             mySQLManager.setData(query);
@@ -46,19 +48,20 @@ public class DAOClient extends DAOGenerique<Client> {
     public void delete(Client client) {
         try {
             DAOFacture daoFacture = new DAOFacture();
-            Facture facture = daoFacture
-                    .findBySomeField("clientId", String.valueOf(client.getId()));
+            Facture facture = daoFacture.findBySomeField("clientId", String.valueOf(client.getId()));
 
-            String query = "DELETE FROM factureItems WHERE idfacture = "
-                    + facture.getId() + ";"
-                    + "DELETE FROM factures WHERE id = "
-                    + facture.getId() + ";"
-                    + "DELETE FROM clients WHERE id = "
-                    + client.getId() + ";";
-            mySQLManager.setData(query);
+            if (facture != null) {
+                String queryFactureItems = "DELETE FROM factureItems WHERE idfacture = " + facture.getId();
+                mySQLManager.setData(queryFactureItems);
+
+                String queryFactures = "DELETE FROM factures WHERE id = " + facture.getId();
+                mySQLManager.setData(queryFactures);
+            }
+
+            String queryClients = "DELETE FROM clients WHERE id = " + client.getId();
+            mySQLManager.setData(queryClients);
         } catch (Exception e) {
-            System.err.println("Erreur SQL lors de la suppression d'un client : "
-                    + e.getMessage());
+            System.err.println("Erreur SQL lors de la suppression d'un client : " + e.getMessage());
         }
     }
 
@@ -79,6 +82,7 @@ public class DAOClient extends DAOGenerique<Client> {
             if (rs.next()) {
                 client = new Client(
                         rs.getString("nom"),
+                        rs.getString("prenom"),
                         rs.getString("adresse"),
                         rs.getInt("id"));
             }
@@ -99,6 +103,7 @@ public class DAOClient extends DAOGenerique<Client> {
             if (rs.next()) {
                 client = new Client(
                         rs.getString("nom"),
+                        rs.getString("prenom"),
                         rs.getString("adresse"),
                         rs.getInt("id"));
 
@@ -120,6 +125,7 @@ public class DAOClient extends DAOGenerique<Client> {
             while (rs.next()) {
                 Client client = new Client(
                         rs.getString("nom"),
+                        rs.getString("prenom"),
                         rs.getString("adresse"),
                         rs.getInt("id"));
                 clients.add(client);
@@ -140,6 +146,7 @@ public class DAOClient extends DAOGenerique<Client> {
             while (rs.next()) {
                 Client client = new Client(
                         rs.getString("nom"),
+                        rs.getString("prenom"),
                         rs.getString("adresse"),
                         rs.getInt("id"));
                 clients.add(client);
@@ -161,6 +168,7 @@ public class DAOClient extends DAOGenerique<Client> {
             while (rs.next()) {
                 Client client = new Client(
                         rs.getString("nom"),
+                        rs.getString("prenom"),
                         rs.getString("adresse"),
                         rs.getInt("id"));
                 clients.add(client);

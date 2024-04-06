@@ -30,7 +30,7 @@ public class PageAchat extends JFrame {
     private ClientDistant clientDistant = new ClientDistant();
     private Facture factureEnCours;
     private List<FactureItem> factureItemsEnCours;
-
+    private Client clientEnCours;
     public PageAchat() {
         RefreshListeClients();
         RefreshListeFamilles();
@@ -58,11 +58,18 @@ public class PageAchat extends JFrame {
         ajouterAuPanierButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                if(clientEnCours == null) {
+                    JOptionPane.showMessageDialog(
+                            PageAchat.this,
+                            "Pas de client selectionner",
+                            "Error", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
                 if (composantsListe.getSelectedIndex() != -1) {
                     int quantite = Integer.parseInt(QuantitetextField.getText());
                     Composant composant = composants.get(composantsListe.getSelectedIndex());
 
-                    if(composant.getQuantite() < quantite) {
+                    if (composant.getQuantite() < quantite) {
                         JOptionPane.showMessageDialog(
                                 PageAchat.this,
                                 "Quantité insuffisante",
@@ -71,7 +78,8 @@ public class PageAchat extends JFrame {
                     }
 
                     try {
-                        clientDistant.stub.ajouterAuPanier(composant.getReference(), quantite, clientEnCourLabel.getText());
+                        clientDistant.stub.ajouterAuPanier(
+                                composant.getReference(), quantite, clientEnCours.getNom());
                         loadPanier();
                     } catch (RemoteException ex) {
                         JOptionPane.showMessageDialog(
@@ -104,7 +112,7 @@ public class PageAchat extends JFrame {
                     } catch (RemoteException ex) {
                         JOptionPane.showMessageDialog(
                                 PageAchat.this,
-                                "Erreur lors de la suppression du panier: " +
+                                "Erreur lors de la suppression de l'article du panier: " +
                                         ex.getMessage(),
                                 "Error", JOptionPane.ERROR_MESSAGE);
                     }
@@ -115,23 +123,25 @@ public class PageAchat extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 try {
-                    // Call a popup asking for the payment method and also show the total to pay
-                    String[] paymentMethods = {"CARTEBANCAIRE", "CHEQUE", "VIREMENT"};
+                    EnumModeDePaiment[] paymentMethodsEnum = EnumModeDePaiment.values();
+                    String[] paymentMethods = new String[paymentMethodsEnum.length];
+                    for (int i = 0; i < paymentMethodsEnum.length; i++) {
+                        paymentMethods[i] = paymentMethodsEnum[i].name();
+                    }
                     String selectedPaymentMethod = (String) JOptionPane.showInputDialog(
                             PageAchat.this,
-                            "Total to pay: " + totalPrixLabel.getText() + "\nChoose a payment method:",
-                            "Payment",
+                            "Total a payer: " + totalPrixLabel.getText() + "\nChoisir un mode de paiment:",
+                            "Paiement",
                             JOptionPane.QUESTION_MESSAGE,
                             null,
                             paymentMethods,
                             paymentMethods[0]
                     );
 
-                    // If a payment method was selected
                     if (selectedPaymentMethod != null) {
                         EnumModeDePaiment modeDePaiment = EnumModeDePaiment.valueOf(selectedPaymentMethod);
 
-                        boolean result = clientDistant.stub.payerFacture(clientEnCourLabel.getText(), modeDePaiment);
+                        boolean result = clientDistant.stub.payerFacture(clientEnCours.getNom(), modeDePaiment);
                         if (!result) {
                             JOptionPane.showMessageDialog(
                                     PageAchat.this,
@@ -159,8 +169,6 @@ public class PageAchat extends JFrame {
             }
         });
     }
-
-
 
     private void RefreshListeClients() {
         try {
@@ -197,18 +205,23 @@ public class PageAchat extends JFrame {
     }
 
     private void loadPanier() {
+        // clear panier
+        DefaultListModel<String> model = new DefaultListModel<>();
+        panierListe.setModel(model);
+        totalPrixLabel.setText("0");
+
         if (clientsListe.getSelectedIndex() != -1) {
-            String client = clients.get(clientsListe.getSelectedIndex()).getNom();
-            int idClient = clients.get(clientsListe.getSelectedIndex()).getId();
-            clientEnCourLabel.setText(client);
+            clientEnCours = clients.get(clientsListe.getSelectedIndex());
+            String client = clientEnCours.getNom() + " " + clientEnCours.getPrenom();
+            clientLabel.setText(client);
 
             try {
-                factureEnCours = clientDistant.stub.getFacture(idClient);
+                factureEnCours = clientDistant.stub.getFactureEnCours(clientEnCours.getId());
                 if(factureEnCours != null) {
                     totalPrixLabel.setText(String.valueOf(factureEnCours.getTotalFacture()));
                     factureItemsEnCours = clientDistant.stub.getAllFactureItem(factureEnCours.getId());
                     if(factureEnCours != null) {
-                        DefaultListModel<String> model = new DefaultListModel<>();
+                        model = new DefaultListModel<>();
                         for (FactureItem factureItem : factureItemsEnCours) {
                             model.addElement(factureItem.getComposant().getReference()
                                     + " - "
@@ -221,7 +234,8 @@ public class PageAchat extends JFrame {
                 }
             } catch (RemoteException ex) {
                 JOptionPane.showMessageDialog(
-                        PageAchat.this, "Erreur lors de la modification du client: " +
+                        PageAchat.this,
+                        "Erreur lors de la récupération de la facture du client: " +
                                 ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
             }
         }
@@ -241,7 +255,8 @@ public class PageAchat extends JFrame {
             composantsListe.setModel(model);
         } catch (RemoteException ex) {
             JOptionPane.showMessageDialog(
-                    PageAchat.this, "Erreur lors de la modification du client: " +
+                    PageAchat.this,
+                    "Erreur lors de la mise a jour de la liste des composants: " +
                             ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
     }

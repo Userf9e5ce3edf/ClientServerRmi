@@ -48,6 +48,7 @@ public class PageClients extends JFrame {
                 if (ClientList.getSelectedIndex() != -1) {
                     Client client = clients.get(ClientList.getSelectedIndex());
                     NomtextField.setText(client.getNom());
+                    PrenomtextField.setText(client.getPrenom());
                     AdressetextField.setText(client.getAdresse());
                 }
             }
@@ -56,9 +57,10 @@ public class PageClients extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 String nom = NomtextField.getText();
+                String prenom = PrenomtextField.getText();
                 String adresse = AdressetextField.getText();
                 try {
-                    clientDistant.stub.createClient(nom, adresse);
+                    clientDistant.stub.createClient(nom, prenom, adresse);
                     RefreshListeClients();
                     ClearFields();
                 } catch (RemoteException ex) {
@@ -90,9 +92,10 @@ public class PageClients extends JFrame {
                 if (ClientList.getSelectedIndex() != -1) {
                     int id = clients.get(ClientList.getSelectedIndex()).getId();
                     String nom = NomtextField.getText();
+                    String prenom = PrenomtextField.getText();
                     String adresse = AdressetextField.getText();
                     try {
-                        clientDistant.stub.updateClient(id, nom, adresse);
+                        clientDistant.stub.updateClient(id, nom, prenom, adresse);
                         RefreshListeClients();
                         ClearFields();
                     } catch (RemoteException ex) {

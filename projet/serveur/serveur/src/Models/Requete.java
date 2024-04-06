@@ -39,30 +39,36 @@ public class Requete implements IRequete, Serializable {
     }
     @Override
     public boolean ajouterAuPanier(String refComposant, int quantite, String nomClient) throws RemoteException {
-        // Check if the client has an ongoing invoice
         Client client = daoClient.findBySomeField("nom", nomClient);
-        Facture facture = daoFacture.findBySomeField("clientId", String.valueOf(client.getId()));
-        if (facture == null) {
+        List<Facture> factures = daoFacture.findAllBySomeField("clientId", String.valueOf(client.getId()));
+        Facture facture = null;
+        for (Facture fact : factures) {
+            if (fact.getStatutFacture() == EnumStatutFacture.ENCOURS) {
+                facture = fact;
+            }
+        }
+
+        if (facture == null || facture.getStatutFacture() == EnumStatutFacture.FERMER) {
             // si pas de facture en curs, on en crée une
             facture = new Facture(client, 0, EnumModeDePaiment.NON_DEFINI);
             daoFacture.create(facture);
         }
 
-        // Find the composant
+        // trouver composant
         Composant composant = daoComposant.findBySomeField("reference", refComposant);
 
-        // Check if the client has already added this specific composant to his facture
+        // Check si le client a deja ce composant dans cette facture
         Map<String, String> fields = new HashMap<>();
         fields.put("idfacture", String.valueOf(facture.getId()));
         fields.put("idcomposant", String.valueOf(composant.getId()));
         FactureItem factureItem = daoFactureItem.findBySomeFields(fields);
 
         if (factureItem != null) {
-            // If yes, update the quantity
+            // si oui on rajoute a la quantite
             factureItem.setQuantite(factureItem.getQuantite() + quantite);
             daoFactureItem.update(factureItem);
         } else {
-            // If no, create a new line in the FactureItem table
+            // si non on creer un nouveau factureItem
             factureItem = new FactureItem(composant, facture, quantite);
             daoFactureItem.create(factureItem);
             if(factureItem == null) {
@@ -72,7 +78,7 @@ public class Requete implements IRequete, Serializable {
         // retire  les composants du stock
         retirerComposantDuStock(refComposant, quantite);
 
-        // Update the totalFacture of the Facture
+        // mise a jour du total
         double costOfAddedItems = factureItem.getComposant().getPrix() * quantite;
         facture.setTotalFacture(facture.getTotalFacture() + costOfAddedItems);
         daoFacture.update(facture);
@@ -112,7 +118,14 @@ public class Requete implements IRequete, Serializable {
     public boolean payerFacture(String nomClient, EnumModeDePaiment modeDePaiment) throws RemoteException {
         Client client = daoClient.findBySomeField("nom", nomClient);
         if (client != null) {
-            Facture facture = daoFacture.findBySomeField("clientId", String.valueOf(client.getId()));
+            List<Facture> factures = daoFacture.findAllBySomeField("clientId", String.valueOf(client.getId()));
+           Facture facture = null;
+            for (Facture fact : factures) {
+                if (fact.getStatutFacture() == EnumStatutFacture.ENCOURS) {
+                    facture = fact;
+                }
+            }
+
             if (facture != null && facture.getStatutFacture() == EnumStatutFacture.ENCOURS) {
                 facture.setModeDePaiment(modeDePaiment);
                 facture.setStatutFacture(EnumStatutFacture.FERMER);
@@ -151,10 +164,15 @@ public class Requete implements IRequete, Serializable {
 
         return factureDetails.toString();
     }
-
     @Override
-    public Facture getFacture(int idClient) throws RemoteException {
-        return daoFacture.findBySomeField("clientId", String.valueOf(idClient));
+    public Facture getFactureEnCours(int idClient) throws RemoteException {
+        List<Facture> factures = daoFacture.findAllBySomeField("clientId", String.valueOf(idClient));
+        for (Facture facture : factures) {
+            if (facture.getStatutFacture() == EnumStatutFacture.ENCOURS) {
+                return facture;
+            }
+        }
+        return null;
     }
 
     @Override
@@ -197,16 +215,17 @@ public class Requete implements IRequete, Serializable {
 
     // CRUD operations pour Client
     @Override
-    public Client createClient(String nom, String adresse) {
-        Client client = new Client(nom, adresse);
+    public Client createClient(String nom, String prenom, String adresse) {
+        Client client = new Client(nom, prenom, adresse);
         return daoClient.create(client);
     }
     @Override
-    public Client updateClient(int id, String nom, String adresse) {
+    public Client updateClient(int id, String nom, String prenom, String adresse) {
         Client client = daoClient.findById(String.valueOf(id));
         if (client != null) {
             client.setAdresse(adresse);
             client.setNom(nom);
+            client.setPrenom(prenom);
             return daoClient.update(client);
         }
         return null;

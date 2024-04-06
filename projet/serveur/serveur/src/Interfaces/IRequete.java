@@ -39,13 +39,13 @@ public interface IRequete extends Remote {
    public  boolean retirerComposantDuStock(String refComposant, int quantite) throws RemoteException;
     public boolean payerFacture(String nomClient, EnumModeDePaiment modeDePaiment) throws RemoteException;
     public String ConsulterFacture(String nomClient) throws RemoteException;
-    public Facture getFacture(int idClient) throws RemoteException;
+    public Facture getFactureEnCours(int idClient) throws RemoteException;
     public List<FactureItem> getAllFactureItem(int idFacture) throws RemoteException;
     public boolean retirerDuPanier(int quantite, int  id) throws RemoteException;
     // CRUD operations for Client
-    public Client createClient(String nom, String adresse) throws RemoteException;
+    public Client createClient(String nom,String prenom, String adresse) throws RemoteException;
     public boolean deleteClient(int id) throws RemoteException;
-    public Client updateClient(int id, String nom, String adresse) throws RemoteException;
+    public Client updateClient(int id, String nom,String prenom, String adresse) throws RemoteException;
     public Client getClient(int id) throws RemoteException;
     public List<Client> getAllClients() throws RemoteException;
 }

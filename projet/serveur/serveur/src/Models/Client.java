@@ -10,20 +10,26 @@ public class Client implements IClient, Serializable {
     private static final long serialVersionUID = 1L;
     private int id;
     private String nom;
+    private String prenom;
     private String adresse;
 
-    public Client(final String nom, final String adresse) {
+    public Client(final String nom, final String prenom, final String adresse) {
         this.nom = nom;
+        this.prenom = prenom;
         this.adresse = adresse;
     }
-    public Client(final String nom, final String adresse, final int id) {
+    public Client(final String nom, final String prenom, final String adresse, final int id) {
         this.nom = nom;
+        this.prenom = prenom;
         this.adresse = adresse;
         this.id = id;
     }
 
     public String getNom() {
         return nom;
+    }
+    public String getPrenom() {
+        return prenom;
     }
     public String getAdresse() {
         return adresse;
@@ -38,15 +44,20 @@ public class Client implements IClient, Serializable {
     public void setNom(String nom) {
         this.nom = nom;
     }
+    public void setPrenom(String prenom) {
+        this.prenom = prenom;
+    }
     public void setAdresse(String adresse) {
         this.adresse = adresse;
     }
+
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder("Client{");
-        sb.append("nom='").append(nom).append('\'');
-        sb.append(", adresse='").append(adresse).append('\'');
-        sb.append('}');
-        return sb.toString();
+        return "Client{" +
+                "id=" + id +
+                ", nom='" + nom + '\'' +
+                ", prenom='" + prenom + '\'' +
+                ", adresse='" + adresse + '\'' +
+                '}';
     }
 }
