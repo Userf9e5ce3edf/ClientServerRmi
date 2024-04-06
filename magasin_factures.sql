@@ -29,22 +29,12 @@ CREATE TABLE `factures` (
   `clientId` int NOT NULL,
   `totalFacture` double NOT NULL,
   `modeDePaiment` varchar(50) DEFAULT NULL,
-  `statutFacture` enum('ENCOURS','PAID','CANCELLED') NOT NULL,
+  `statutFacture` enum('ENCOURS','FERMER') DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `clientId` (`clientId`),
   CONSTRAINT `factures_ibfk_1` FOREIGN KEY (`clientId`) REFERENCES `clients` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=29 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `factures`
---
-
-LOCK TABLES `factures` WRITE;
-/*!40000 ALTER TABLE `factures` DISABLE KEYS */;
-INSERT INTO `factures` VALUES (7,1,740,'CARTEBANCAIRE','ENCOURS');
-/*!40000 ALTER TABLE `factures` ENABLE KEYS */;
-UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -55,4 +45,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-03-31 19:18:11
+-- Dump completed on 2024-04-06 19:38:05
