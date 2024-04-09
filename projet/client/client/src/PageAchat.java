@@ -27,7 +27,7 @@ public class PageAchat extends JFrame {
     private List<Client> clients;
     private List<Composant> composants;
     private List<String> familles;
-    private ClientDistant clientDistant = new ClientDistant();
+    private ClientDistant clientDistant = ClientDistant.getInstance();
     private Facture factureEnCours;
     private List<FactureItem> factureItemsEnCours;
     private Client clientEnCours;
@@ -72,7 +72,7 @@ public class PageAchat extends JFrame {
                     if (composant.getQuantite() < quantite) {
                         JOptionPane.showMessageDialog(
                                 PageAchat.this,
-                                "Quantité insuffisante",
+                                "Quantité en stock insuffisante",
                                 "Error", JOptionPane.ERROR_MESSAGE);
                         return;
                     }
@@ -81,6 +81,8 @@ public class PageAchat extends JFrame {
                         clientDistant.stub.ajouterAuPanier(
                                 composant.getReference(), quantite, clientEnCours.getNom());
                         loadPanier();
+                        RefreshListeComposants(composant.getFamille());
+                        QuantitetextField.setText("");
                     } catch (RemoteException ex) {
                         JOptionPane.showMessageDialog(
                                 PageAchat.this,
@@ -109,6 +111,8 @@ public class PageAchat extends JFrame {
                     try {
                         clientDistant.stub.retirerDuPanier(quantite, factureItem.getId());
                         loadPanier();
+                        RefreshListeComposants(factureItem.getComposant().getFamille());
+                        quantiteARetirertextField.setText("");
                     } catch (RemoteException ex) {
                         JOptionPane.showMessageDialog(
                                 PageAchat.this,
@@ -122,6 +126,15 @@ public class PageAchat extends JFrame {
         acheterButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+
+                if(panierListe.getModel().getSize() == 0) {
+                    JOptionPane.showMessageDialog(
+                            PageAchat.this,
+                            "Panier vide",
+                            "Error", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+
                 try {
                     EnumModeDePaiment[] paymentMethodsEnum = EnumModeDePaiment.values();
                     String[] paymentMethods = new String[paymentMethodsEnum.length];

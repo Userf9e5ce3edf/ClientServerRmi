@@ -18,7 +18,6 @@ public class Composant implements Serializable {
         this.prix = prix;
         this.quantite = quantite;
     }
-
     public String getReference() {
         return reference;
     }

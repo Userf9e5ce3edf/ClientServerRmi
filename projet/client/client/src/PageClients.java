@@ -1,6 +1,5 @@
-import Interfaces.IClient;
-import Interfaces.IRequete;
 import Models.Client;
+import Models.ClientDistant;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
@@ -22,7 +21,7 @@ public class PageClients extends JFrame {
     private JButton retourButton;
     private JPanel mainPanel;
     private JPanel secondPanel;
-    private ClientDistant clientDistant = new ClientDistant();
+    private ClientDistant clientDistant = ClientDistant.getInstance();
 
     public PageClients() {
 

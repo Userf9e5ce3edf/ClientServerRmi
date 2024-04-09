@@ -1,4 +1,4 @@
-import Models.Client;
+import Models.ClientDistant;
 import Models.Composant;
 
 import javax.swing.*;
@@ -19,7 +19,7 @@ public class GestionStock extends JFrame {
     private JPanel mainPanel;
     private List<Composant> composants;
     private List<String> familles;
-    private ClientDistant clientDistant = new ClientDistant();
+    private ClientDistant clientDistant = ClientDistant.getInstance();
 
     public GestionStock() {
 
