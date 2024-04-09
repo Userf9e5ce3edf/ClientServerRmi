@@ -11,11 +11,13 @@ import java.rmi.RemoteException;
 import java.util.*;
 
 public class Requete implements IRequete, Serializable {
-    private DAOClient daoClient = new DAOClient();
-    private DAOComposant daoComposant = new DAOComposant();
-    private DAOFacture daoFacture = new DAOFacture();
-    private DAOFactureItem daoFactureItem = new DAOFactureItem();
+    private final DAOClient daoClient = new DAOClient();
+    private final DAOComposant daoComposant = new DAOComposant();
+    private final DAOFacture daoFacture = new DAOFacture();
+    private final DAOFactureItem daoFactureItem = new DAOFactureItem();
 
+
+    // operations pour Composant
     @Override
     public String VoirStock(String refComposant) {
         Composant composant = daoComposant.findBySomeField("reference" ,refComposant);
@@ -36,6 +38,51 @@ public class Requete implements IRequete, Serializable {
             }
         }
         return availableComposants;
+    }
+    @Override
+    public boolean ajouterComposant(String refComposant, int quantite) throws RemoteException {
+        Composant composant = daoComposant.findBySomeField("reference",refComposant);
+        if (composant != null) {
+            composant.quantite += quantite;
+            daoComposant.update(composant);
+            return true;
+        }
+        return false;
+    }
+    @Override
+    public boolean retirerComposantDuStock(String refComposant, int quantite) throws RemoteException {
+        Composant composant = daoComposant.findBySomeField("reference", refComposant);
+        if (composant == null) {
+            return false;
+        }
+        int nouvelleQuantite = composant.quantite - quantite;
+
+        if (nouvelleQuantite < 0) {
+            return false;
+        }
+
+        composant.quantite -= quantite;
+        Composant updatedComposant = daoComposant.update(composant);
+        if (updatedComposant == null) {
+            return false;
+        }
+        return true;
+    }
+    @Override
+    public Facture getFactureEnCours(int idClient) throws RemoteException {
+        List<Facture> factures = daoFacture.findAllBySomeField("clientId", String.valueOf(idClient));
+        for (Facture facture : factures) {
+            if (facture.getStatutFacture() == EnumStatutFacture.ENCOURS) {
+                return facture;
+            }
+        }
+        return null;
+    }
+
+    // operations pour le panier
+    @Override
+    public List<FactureItem> getAllFactureItem(int idFacture) throws RemoteException {
+        return daoFactureItem.findAllBySomeField("idfacture", String.valueOf(idFacture));
     }
     @Override
     public boolean ajouterAuPanier(String refComposant, int quantite, String nomClient) throws RemoteException {
@@ -86,40 +133,44 @@ public class Requete implements IRequete, Serializable {
         return true;
     }
     @Override
-    public boolean ajouterComposant(String refComposant, int quantite) throws RemoteException {
-        Composant composant = daoComposant.findBySomeField("reference",refComposant);
-        if (composant != null) {
+    public boolean retirerDuPanier(int quantite, int  id) throws RemoteException {
+        FactureItem factureItem = daoFactureItem.findById(String.valueOf(id));
+        if (factureItem != null) {
+            Composant composant = factureItem.getComposant();
             composant.quantite += quantite;
             daoComposant.update(composant);
+
+            // Update the totalFacture of the Facture
+            double costOfRemovedItems = factureItem.getComposant().getPrix() * quantite;
+
+            System.out.println("costOfRemovedItems: " + costOfRemovedItems);
+
+            Facture facture = daoFacture.findById(String.valueOf(factureItem.getFacture().getId()));
+
+            System.out.println(facture.toString());
+
+            facture.setTotalFacture(facture.getTotalFacture() - costOfRemovedItems);
+            Facture test = daoFacture.update(facture);
+
+            System.out.println("caca" + test.toString());
+
+            // Update the quantity of the FactureItem, delete only if the quantity is 0
+            factureItem.setQuantite(factureItem.getQuantite() - quantite);
+            if (factureItem.getQuantite() == 0) {
+                daoFactureItem.delete(factureItem);
+            } else {
+                daoFactureItem.update(factureItem);
+            }
             return true;
         }
         return false;
-    }
-    @Override
-    public boolean retirerComposantDuStock(String refComposant, int quantite) throws RemoteException {
-        Composant composant = daoComposant.findBySomeField("reference", refComposant);
-        if (composant == null) {
-            return false;
-        }
-        int nouvelleQuantite = composant.quantite - quantite;
-
-        if (nouvelleQuantite < 0) {
-            return false;
-        }
-
-        composant.quantite -= quantite;
-        Composant updatedComposant = daoComposant.update(composant);
-        if (updatedComposant == null) {
-            return false;
-        }
-        return true;
     }
     @Override
     public boolean payerFacture(String nomClient, EnumModeDePaiment modeDePaiment) throws RemoteException {
         Client client = daoClient.findBySomeField("nom", nomClient);
         if (client != null) {
             List<Facture> factures = daoFacture.findAllBySomeField("clientId", String.valueOf(client.getId()));
-           Facture facture = null;
+            Facture facture = null;
             for (Facture fact : factures) {
                 if (fact.getStatutFacture() == EnumStatutFacture.ENCOURS) {
                     facture = fact;
@@ -164,56 +215,8 @@ public class Requete implements IRequete, Serializable {
 
         return factureDetails.toString();
     }
-    @Override
-    public Facture getFactureEnCours(int idClient) throws RemoteException {
-        List<Facture> factures = daoFacture.findAllBySomeField("clientId", String.valueOf(idClient));
-        for (Facture facture : factures) {
-            if (facture.getStatutFacture() == EnumStatutFacture.ENCOURS) {
-                return facture;
-            }
-        }
-        return null;
-    }
 
-    @Override
-    public List<FactureItem> getAllFactureItem(int idFacture) throws RemoteException {
-        return daoFactureItem.findAllBySomeField("idfacture", String.valueOf(idFacture));
-    }
-    @Override
-    public boolean retirerDuPanier(int quantite, int  id) throws RemoteException {
-        FactureItem factureItem = daoFactureItem.findById(String.valueOf(id));
-        if (factureItem != null) {
-            Composant composant = factureItem.getComposant();
-            composant.quantite += quantite;
-            daoComposant.update(composant);
-
-            // Update the totalFacture of the Facture
-            double costOfRemovedItems = factureItem.getComposant().getPrix() * quantite;
-
-            System.out.println("costOfRemovedItems: " + costOfRemovedItems);
-
-            Facture facture = daoFacture.findById(String.valueOf(factureItem.getFacture().getId()));
-
-            System.out.println(facture.toString());
-
-            facture.setTotalFacture(facture.getTotalFacture() - costOfRemovedItems);
-            Facture test = daoFacture.update(facture);
-
-            System.out.println("caca" + test.toString());
-
-            // Update the quantity of the FactureItem, delete only if the quantity is 0
-            factureItem.setQuantite(factureItem.getQuantite() - quantite);
-            if (factureItem.getQuantite() == 0) {
-                daoFactureItem.delete(factureItem);
-            } else {
-                daoFactureItem.update(factureItem);
-            }
-            return true;
-        }
-        return false;
-    }
-
-    // CRUD operations pour Client
+    // operations pour Client
     @Override
     public Client createClient(String nom, String prenom, String adresse) {
         Client client = new Client(nom, prenom, adresse);

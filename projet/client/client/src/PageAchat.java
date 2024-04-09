@@ -5,6 +5,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.util.List;
 
@@ -27,11 +28,21 @@ public class PageAchat extends JFrame {
     private List<Client> clients;
     private List<Composant> composants;
     private List<String> familles;
-    private ClientDistant clientDistant = ClientDistant.getInstance();
+    private ClientDistant clientDistant;
     private Facture factureEnCours;
     private List<FactureItem> factureItemsEnCours;
     private Client clientEnCours;
     public PageAchat() {
+
+        try {
+            ClientDistant.getInstance();
+        } catch (RemoteException | NotBoundException e) {
+            JOptionPane.showMessageDialog(this,
+                    "Error: " + e.getMessage(), "Error",
+                    JOptionPane.ERROR_MESSAGE);
+            dispose();
+        }
+
         RefreshListeClients();
         RefreshListeFamilles();
 
@@ -62,7 +73,7 @@ public class PageAchat extends JFrame {
                     JOptionPane.showMessageDialog(
                             PageAchat.this,
                             "Pas de client selectionner",
-                            "Error", JOptionPane.ERROR_MESSAGE);
+                            "Erreur", JOptionPane.ERROR_MESSAGE);
                     return;
                 }
                 if (composantsListe.getSelectedIndex() != -1) {
@@ -73,7 +84,7 @@ public class PageAchat extends JFrame {
                         JOptionPane.showMessageDialog(
                                 PageAchat.this,
                                 "Quantité en stock insuffisante",
-                                "Error", JOptionPane.ERROR_MESSAGE);
+                                "Erreur", JOptionPane.ERROR_MESSAGE);
                         return;
                     }
 
@@ -104,7 +115,7 @@ public class PageAchat extends JFrame {
                         JOptionPane.showMessageDialog(
                                 PageAchat.this,
                                 "Quantité insuffisante",
-                                "Error", JOptionPane.ERROR_MESSAGE);
+                                "Erreur", JOptionPane.ERROR_MESSAGE);
                         return;
                     }
 
@@ -118,7 +129,7 @@ public class PageAchat extends JFrame {
                                 PageAchat.this,
                                 "Erreur lors de la suppression de l'article du panier: " +
                                         ex.getMessage(),
-                                "Error", JOptionPane.ERROR_MESSAGE);
+                                "Erreur", JOptionPane.ERROR_MESSAGE);
                     }
                 }
             }
@@ -131,7 +142,7 @@ public class PageAchat extends JFrame {
                     JOptionPane.showMessageDialog(
                             PageAchat.this,
                             "Panier vide",
-                            "Error", JOptionPane.ERROR_MESSAGE);
+                            "Erreur", JOptionPane.ERROR_MESSAGE);
                     return;
                 }
 
@@ -159,7 +170,7 @@ public class PageAchat extends JFrame {
                             JOptionPane.showMessageDialog(
                                     PageAchat.this,
                                     "Erreur lors de l'achat",
-                                    "Error", JOptionPane.ERROR_MESSAGE);
+                                    "Erreur", JOptionPane.ERROR_MESSAGE);
                         }
                         loadPanier();
                     }
@@ -168,7 +179,7 @@ public class PageAchat extends JFrame {
                             PageAchat.this,
                             "Erreur lors de l'achat: " +
                                     ex.getMessage(),
-                            "Error", JOptionPane.ERROR_MESSAGE);
+                            "Erreur", JOptionPane.ERROR_MESSAGE);
                 }
             }
         });
@@ -189,7 +200,7 @@ public class PageAchat extends JFrame {
         } catch (RemoteException e) {
             JOptionPane.showMessageDialog(
                     this, "Erreur lors du chargement des clients: " +
-                            e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                            e.getMessage(), "Erreur", JOptionPane.ERROR_MESSAGE);
             PagePrincipale pagePrincipale = new PagePrincipale();
             pagePrincipale.setVisible(true);
             dispose();
@@ -208,7 +219,7 @@ public class PageAchat extends JFrame {
         } catch (RemoteException e) {
             JOptionPane.showMessageDialog(
                     this, "Erreur lors du chargement des familles: " +
-                            e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                            e.getMessage(), "Erreur", JOptionPane.ERROR_MESSAGE);
             PagePrincipale pagePrincipale = new PagePrincipale();
             pagePrincipale.setVisible(true);
             dispose();
@@ -218,7 +229,6 @@ public class PageAchat extends JFrame {
     }
 
     private void loadPanier() {
-        // clear panier
         DefaultListModel<String> model = new DefaultListModel<>();
         panierListe.setModel(model);
         totalPrixLabel.setText("0");
@@ -249,7 +259,7 @@ public class PageAchat extends JFrame {
                 JOptionPane.showMessageDialog(
                         PageAchat.this,
                         "Erreur lors de la récupération de la facture du client: " +
-                                ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                                ex.getMessage(), "Erreur", JOptionPane.ERROR_MESSAGE);
             }
         }
     }
@@ -270,7 +280,7 @@ public class PageAchat extends JFrame {
             JOptionPane.showMessageDialog(
                     PageAchat.this,
                     "Erreur lors de la mise a jour de la liste des composants: " +
-                            ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                            ex.getMessage(), "Erreur", JOptionPane.ERROR_MESSAGE);
         }
     }
 }

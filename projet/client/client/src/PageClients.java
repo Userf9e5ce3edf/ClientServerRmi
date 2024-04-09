@@ -6,6 +6,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.util.List;
 
@@ -21,9 +22,18 @@ public class PageClients extends JFrame {
     private JButton retourButton;
     private JPanel mainPanel;
     private JPanel secondPanel;
-    private ClientDistant clientDistant = ClientDistant.getInstance();
+    private ClientDistant clientDistant;
 
     public PageClients() {
+          try {
+                clientDistant = ClientDistant.getInstance();
+            } catch (RemoteException | NotBoundException e) {
+                JOptionPane.showMessageDialog(this,
+                        "Erreur: " + e.getMessage(), "Erreur",
+                        JOptionPane.ERROR_MESSAGE);
+                dispose();
+                return; // pour etre sur que le code ne s'execute pas
+            }
 
         RefreshListeClients();
 

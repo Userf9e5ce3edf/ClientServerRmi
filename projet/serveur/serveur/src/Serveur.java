@@ -10,15 +10,18 @@ public class Serveur {
 
     public static void main(String args[]) {
         try {
-            Requete obj = new Requete();
-            IRequete stub = (IRequete) UnicastRemoteObject.exportObject(obj, 0);
-            Registry reg = LocateRegistry.getRegistry();
-            reg.bind("Hello", stub);
+            int port = 1099;
+            LocateRegistry.createRegistry(port);
+            System.out.println("RMI registry sur le port " + port);
 
-            System.out.println("Server ready");
+            Requete obj = new Requete();
+            IRequete stub = (IRequete) UnicastRemoteObject.exportObject(obj, port);
+            Registry reg = LocateRegistry.getRegistry();
+            reg.bind("Requete", stub);
+
+            System.out.println("Server prêt");
         } catch (Exception e) {
-            System.err.println("Server exception: " + e.toString());
-            e.printStackTrace();
+            System.err.println("Server error: " + e.toString());
         }
     }
 }
