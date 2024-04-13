@@ -31,6 +31,8 @@ public class PageClients extends JFrame {
                 JOptionPane.showMessageDialog(this,
                         "Erreur: " + e.getMessage(), "Erreur",
                         JOptionPane.ERROR_MESSAGE);
+              PagePrincipale pagePrincipale = new PagePrincipale();
+              pagePrincipale.setVisible(true);
                 dispose();
                 return; // pour etre sur que le code ne s'execute pas
             }

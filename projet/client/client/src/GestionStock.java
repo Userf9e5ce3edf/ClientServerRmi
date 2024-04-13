@@ -23,14 +23,16 @@ public class GestionStock extends JFrame {
     private ClientDistant clientDistant;
 
     public GestionStock() {
-
         try {
-            ClientDistant.getInstance();
+            clientDistant = ClientDistant.getInstance();
         } catch (RemoteException | NotBoundException e) {
             JOptionPane.showMessageDialog(this,
-                    "Error: " + e.getMessage(), "Error",
+                    "Erreur: " + e.getMessage(), "Erreur",
                     JOptionPane.ERROR_MESSAGE);
+            PagePrincipale pagePrincipale = new PagePrincipale();
+            pagePrincipale.setVisible(true);
             dispose();
+            return; // pour etre sur que le code ne s'execute pas
         }
 
         RefreshListeFamille();

@@ -33,14 +33,16 @@ public class PageAchat extends JFrame {
     private List<FactureItem> factureItemsEnCours;
     private Client clientEnCours;
     public PageAchat() {
-
         try {
-            ClientDistant.getInstance();
+            clientDistant = ClientDistant.getInstance();
         } catch (RemoteException | NotBoundException e) {
             JOptionPane.showMessageDialog(this,
-                    "Error: " + e.getMessage(), "Error",
+                    "Erreur: " + e.getMessage(), "Erreur",
                     JOptionPane.ERROR_MESSAGE);
+            PagePrincipale pagePrincipale = new PagePrincipale();
+            pagePrincipale.setVisible(true);
             dispose();
+            return; // pour etre sur que le code ne s'execute pas
         }
 
         RefreshListeClients();

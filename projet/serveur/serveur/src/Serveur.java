@@ -1,6 +1,8 @@
 import Interfaces.IRequete;
 import Models.Requete;
 
+import java.io.IOException;
+import java.net.ServerSocket;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
@@ -21,7 +23,7 @@ public class Serveur {
 
             System.out.println("Server prêt");
         } catch (Exception e) {
-            System.err.println("Server error: " + e.toString());
+            System.err.println("Erreur serveur: " + e.toString());
         }
     }
 }
