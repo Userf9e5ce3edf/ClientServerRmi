@@ -1,5 +1,3 @@
-CREATE DATABASE  IF NOT EXISTS `magasin` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
-USE `magasin`;
 -- MySQL dump 10.13  Distrib 8.0.36, for Win64 (x86_64)
 --
 -- Host: localhost    Database: magasin
@@ -28,13 +26,23 @@ CREATE TABLE `factures` (
   `id` int NOT NULL AUTO_INCREMENT,
   `clientId` int NOT NULL,
   `totalFacture` double NOT NULL,
-  `modeDePaiment` varchar(50) DEFAULT NULL,
+  `modeDePaiment` enum('CARTEBANCAIRE','ESPECE','NON_DEFINI','VIREMENT') DEFAULT NULL,
   `statutFacture` enum('ENCOURS','FERMER') DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `clientId` (`clientId`),
   CONSTRAINT `factures_ibfk_1` FOREIGN KEY (`clientId`) REFERENCES `clients` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=29 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=37 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `factures`
+--
+
+LOCK TABLES `factures` WRITE;
+/*!40000 ALTER TABLE `factures` DISABLE KEYS */;
+INSERT INTO `factures` VALUES (36,2,300,'CARTEBANCAIRE','FERMER');
+/*!40000 ALTER TABLE `factures` ENABLE KEYS */;
+UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -45,4 +53,4 @@ CREATE TABLE `factures` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-04-06 19:38:05
+-- Dump completed on 2024-04-13 22:36:34
