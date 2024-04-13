@@ -76,8 +76,11 @@ public class DAOFactureItem extends DAOGenerique<FactureItem> {
             if (rs.next()) {
                 Composant composant = new DAOComposant().findById(rs.getString("idcomposant"));
                 Facture facture = new DAOFacture().findById(rs.getString("idfacture"));
-                factureItem = new FactureItem(composant, facture, rs.getInt("quantite"));
-                factureItem.setId(rs.getInt("id"));
+                factureItem = new FactureItem(
+                        rs.getInt("id"),
+                        composant,
+                        facture,
+                        rs.getInt("quantite"));
             }
         } catch (SQLException e) {
             System.err.println("Erreur SQL lors de la recherche d'un FactureItem par id : "
@@ -96,8 +99,11 @@ public class DAOFactureItem extends DAOGenerique<FactureItem> {
             if (rs.next()) {
                 Composant composant = new DAOComposant().findById(String.valueOf(rs.getInt("idcomposant")));
                 Facture facture = new DAOFacture().findById(String.valueOf(rs.getInt("idfacture")));
-                factureItem = new FactureItem(composant, facture, rs.getInt("quantite"));
-                factureItem.setId(rs.getInt("id"));
+                factureItem = new FactureItem(
+                        rs.getInt("id"),
+                        composant,
+                        facture,
+                        rs.getInt("quantite"));
             }
         } catch (SQLException e) {
             System.err.println("Erreur SQL lors de la recherche d'un FactureItem par " + fieldName + " : "
@@ -121,8 +127,11 @@ public class DAOFactureItem extends DAOGenerique<FactureItem> {
             if (rs.next()) {
                 Composant composant = new DAOComposant().findById(String.valueOf(rs.getInt("idcomposant")));
                 Facture facture = new DAOFacture().findById(String.valueOf(rs.getInt("idfacture")));
-                factureItem = new FactureItem(composant, facture, rs.getInt("quantite"));
-                factureItem.setId(rs.getInt("id"));
+                factureItem = new FactureItem(
+                        rs.getInt("id"),
+                        composant,
+                        facture,
+                        rs.getInt("quantite"));
             }
         } catch (SQLException e) {
             System.err.println("Erreur SQL lors de la recherche d'un FactureItem par " + fields.keySet() + " : " + e.getMessage());
@@ -141,8 +150,11 @@ public class DAOFactureItem extends DAOGenerique<FactureItem> {
             while (rs.next()) {
                 Composant composant = new DAOComposant().findById(String.valueOf(rs.getInt("idcomposant")));
                 Facture facture = new DAOFacture().findById(String.valueOf(rs.getInt("idfacture")));
-                FactureItem factureItem = new FactureItem(composant, facture, rs.getInt("quantite"));
-                factureItem.setId(rs.getInt("id"));
+                FactureItem factureItem = new FactureItem(
+                        rs.getInt("id"),
+                        composant,
+                        facture,
+                        rs.getInt("quantite"));
                 factureItems.add(factureItem);
             }
         } catch (SQLException e) {
@@ -161,8 +173,11 @@ public class DAOFactureItem extends DAOGenerique<FactureItem> {
             while (rs.next()) {
                 Composant composant = new DAOComposant().findById(rs.getString("idcomposant"));
                 Facture facture = new DAOFacture().findById(rs.getString("idfacture"));
-                FactureItem factureItem = new FactureItem(composant, facture, rs.getInt("quantite"));
-                factureItem.setId(rs.getInt("idfactureitem"));
+                FactureItem factureItem = new FactureItem(
+                        rs.getInt("id"),
+                        composant,
+                        facture,
+                        rs.getInt("quantite"));
                 factureItems.add(factureItem);
             }
         } catch (SQLException e) {
