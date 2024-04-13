@@ -10,7 +10,11 @@ import java.util.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+/**
+ * Classe pour gérer le stock des composants.
+ */
 public class GestionStock extends JFrame {
+    // Déclaration des composants de l'interface utilisateur
     private JList FamillesList;
     private JList ComposantsList;
     private JLabel AjoutLabel;
@@ -18,10 +22,15 @@ public class GestionStock extends JFrame {
     private JButton AjouterButton;
     private JButton RetourButton;
     private JPanel mainPanel;
+
+    // Déclaration des variables
     private List<Composant> composants;
     private List<String> familles;
     private ClientDistant clientDistant;
 
+    /**
+     * Constructeur de la classe GestionStock.
+     */
     public GestionStock() {
         try {
             clientDistant = ClientDistant.getInstance();
@@ -43,6 +52,7 @@ public class GestionStock extends JFrame {
         setBounds(10, 10, 840, 300);
         setVisible(true);
 
+        // Ajout d'un ActionListener au bouton Retour
         RetourButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -53,6 +63,9 @@ public class GestionStock extends JFrame {
             }
         });
 
+        // Gestionnaires d'événements
+
+        // Ajout d'un ListSelectionListener à la liste des familles
         FamillesList.addListSelectionListener(new ListSelectionListener() {
             @Override
             public void valueChanged(ListSelectionEvent e) {
@@ -62,6 +75,8 @@ public class GestionStock extends JFrame {
                 }
             }
         });
+
+        // Ajout d'un ActionListener au bouton Ajouter
         AjouterButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -120,6 +135,10 @@ public class GestionStock extends JFrame {
             }
         });
     }
+
+    /**
+     * Méthode pour rafraîchir la liste des familles.
+     */
     private void RefreshListeFamille() {
         try {
             familles = clientDistant.stub.GetAllFamilles();
@@ -135,6 +154,10 @@ public class GestionStock extends JFrame {
         FamillesList.setListData(familles.toArray());
     }
 
+    /**
+     * Méthode pour rafraîchir la liste des composants en fonction de la famille sélectionnée.
+     * @param famille La famille sélectionnée.
+     */
     private void RefreshListeComposants(String famille) {
         try {
             composants = clientDistant.stub.RechercheComposant(famille);

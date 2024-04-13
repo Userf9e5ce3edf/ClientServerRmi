@@ -3,7 +3,7 @@ package Models;
 /**
  * Cette énumération représente les différents modes de paiement possibles.
  */
-public enum EnumModeDePaiment {
+public enum EnumModeDePaiement {
     /**
      * Paiement par carte bancaire.
      */

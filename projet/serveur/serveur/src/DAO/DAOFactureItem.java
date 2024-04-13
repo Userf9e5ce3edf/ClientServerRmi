@@ -11,10 +11,20 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Classe DAO pour les éléments de facture (FactureItem).
+ * Cette classe hérite de DAOGenerique et implémente ses méthodes pour FactureItem.
+ */
 public class DAOFactureItem extends DAOGenerique<FactureItem> {
 
+    // Instance du gestionnaire MySQL
     private MySQLManager mySQLManager = MySQLManager.getInstance();
 
+    /**
+     * Crée un nouvel élément de facture dans la base de données.
+     * @param factureItem L'élément de facture à créer.
+     * @return L'élément de facture avec son ID de base de données.
+     */
     @Override
     public FactureItem create(FactureItem factureItem) {
         int id = -1;
@@ -33,6 +43,11 @@ public class DAOFactureItem extends DAOGenerique<FactureItem> {
         return factureItem;
     }
 
+    /**
+     * Met à jour un élément de facture existant dans la base de données.
+     * @param factureItem L'élément de facture à mettre à jour.
+     * @return L'élément de facture mis à jour.
+     */
     @Override
     public FactureItem update(FactureItem factureItem) {
         try {
@@ -47,6 +62,10 @@ public class DAOFactureItem extends DAOGenerique<FactureItem> {
         return factureItem;
     }
 
+    /**
+     * Supprime un élément de facture de la base de données.
+     * @param factureItem L'élément de facture à supprimer.
+     */
     @Override
     public void delete(FactureItem factureItem) {
         try {
@@ -59,13 +78,11 @@ public class DAOFactureItem extends DAOGenerique<FactureItem> {
         }
     }
 
-    @Override
-    public void saveAll(List<FactureItem> factureItems) {
-        for (FactureItem factureItem : factureItems) {
-            create(factureItem);
-        }
-    }
-
+    /**
+     * Trouve un élément de facture par son ID.
+     * @param id L'ID de l'élément de facture à trouver.
+     * @return L'élément de facture trouvé, ou null si aucun élément de facture n'a été trouvé avec cet ID.
+     */
     @Override
     public FactureItem findById(String id) {
         FactureItem factureItem = null;
@@ -89,6 +106,12 @@ public class DAOFactureItem extends DAOGenerique<FactureItem> {
         return factureItem;
     }
 
+    /**
+     * Trouve un élément de facture par un champ spécifique.
+     * @param fieldName Le nom du champ à utiliser pour la recherche.
+     * @param valeur La valeur du champ à utiliser pour la recherche.
+     * @return L'élément de facture trouvé, ou null si aucun élément de facture n'a été trouvé avec cette valeur de champ.
+     */
     @Override
     public FactureItem findBySomeField(String fieldName, String valeur) {
         FactureItem factureItem = null;
@@ -111,6 +134,12 @@ public class DAOFactureItem extends DAOGenerique<FactureItem> {
         }
         return factureItem;
     }
+
+    /**
+     * Trouve un élément de facture par plusieurs champs.
+     * @param fields Une carte des noms de champs et des valeurs à utiliser pour la recherche.
+     * @return L'élément de facture trouvé, ou null si aucun élément de facture n'a été trouvé avec ces valeurs de champ.
+     */
     public FactureItem findBySomeFields(Map<String, String> fields) {
         FactureItem factureItem = null;
         try {
@@ -139,7 +168,12 @@ public class DAOFactureItem extends DAOGenerique<FactureItem> {
         return factureItem;
     }
 
-
+    /**
+     * Trouve tous les éléments de facture avec une valeur de champ spécifique.
+     * @param fieldName Le nom du champ à utiliser pour la recherche.
+     * @param valeur La valeur du champ à utiliser pour la recherche.
+     * @return Une liste des éléments de facture trouvés, ou une liste vide si aucun élément de facture n'a été trouvé avec cette valeur de champ.
+     */
     @Override
     public List<FactureItem> findAllBySomeField(String fieldName, String valeur) {
         List<FactureItem> factureItems = new ArrayList<>();
@@ -164,6 +198,10 @@ public class DAOFactureItem extends DAOGenerique<FactureItem> {
         return factureItems;
     }
 
+    /**
+     * Trouve tous les éléments de facture dans la base de données.
+     * @return Une liste de tous les éléments de facture, ou une liste vide si aucun élément de facture n'a été trouvé.
+     */
     @Override
     public List<FactureItem> findAll() {
         List<FactureItem> factureItems = new ArrayList<>();
@@ -185,8 +223,4 @@ public class DAOFactureItem extends DAOGenerique<FactureItem> {
         return factureItems;
     }
 
-    @Override
-    public List<FactureItem> findByName(String name) {
-        return null;
-    }
 }

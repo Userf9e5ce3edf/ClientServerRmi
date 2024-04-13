@@ -97,7 +97,7 @@ public class Requete implements IRequete, Serializable {
 
         if (facture == null || facture.getStatutFacture() == EnumStatutFacture.FERMER) {
             // si pas de facture en curs, on en crée une
-            facture = new Facture(client, 0, EnumModeDePaiment.NON_DEFINI);
+            facture = new Facture(client, 0, EnumModeDePaiement.NON_DEFINI);
             daoFacture.create(facture);
         }
 
@@ -166,7 +166,7 @@ public class Requete implements IRequete, Serializable {
         return false;
     }
     @Override
-    public boolean payerFacture(String nomClient, EnumModeDePaiment modeDePaiment) throws RemoteException {
+    public boolean payerFacture(String nomClient, EnumModeDePaiement modeDePaiment) throws RemoteException {
         Client client = daoClient.findBySomeField("nom", nomClient);
         if (client != null) {
             List<Facture> factures = daoFacture.findAllBySomeField("clientId", String.valueOf(client.getId()));

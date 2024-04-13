@@ -2,7 +2,6 @@ package DAO;
 
 import Models.Client;
 import Models.Facture;
-import Models.FactureItem;
 import datasourceManagement.MySQLManager;
 
 import java.sql.ResultSet;
@@ -10,9 +9,17 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * DAOClient est une classe qui gère les opérations de base de données pour les objets Client.
+ */
 public class DAOClient extends DAOGenerique<Client> {
     private MySQLManager mySQLManager = MySQLManager.getInstance();
 
+    /**
+     * Crée un nouveau client dans la base de données.
+     * @param client L'objet Client à créer.
+     * @return L'objet Client créé.
+     */
     @Override
     public Client create(Client client) {
         try {
@@ -28,6 +35,11 @@ public class DAOClient extends DAOGenerique<Client> {
         return client;
     }
 
+    /**
+     * Met à jour un client existant dans la base de données.
+     * @param client L'objet Client à mettre à jour.
+     * @return L'objet Client mis à jour.
+     */
     @Override
     public Client update(Client client) {
         try {
@@ -44,6 +56,10 @@ public class DAOClient extends DAOGenerique<Client> {
         return client;
     }
 
+    /**
+     * Supprime un client de la base de données.
+     * @param client L'objet Client à supprimer.
+     */
     @Override
     public void delete(Client client) {
         try {
@@ -65,13 +81,11 @@ public class DAOClient extends DAOGenerique<Client> {
         }
     }
 
-    @Override
-    public void saveAll(List<Client> clients) {
-        for (Client client : clients) {
-            create(client);
-        }
-    }
-
+    /**
+     * Trouve un client par son identifiant.
+     * @param id L'identifiant du client à trouver.
+     * @return L'objet Client trouvé, ou null si aucun client n'a été trouvé.
+     */
     @Override
     public Client findById(String id) {
         Client client = null;
@@ -93,6 +107,12 @@ public class DAOClient extends DAOGenerique<Client> {
         return client;
     }
 
+    /**
+     * Trouve un client par un champ spécifique.
+     * @param nomChamp Le nom du champ à utiliser pour la recherche.
+     * @param valeur La valeur du champ à utiliser pour la recherche.
+     * @return L'objet Client trouvé, ou null si aucun client n'a été trouvé.
+     */
     @Override
     public Client findBySomeField(String nomChamp, String valeur) {
         Client client = null;
@@ -115,6 +135,12 @@ public class DAOClient extends DAOGenerique<Client> {
         return client;
     }
 
+    /**
+     * Trouve tous les clients qui ont une certaine valeur pour un champ spécifique.
+     * @param fieldName Le nom du champ à utiliser pour la recherche.
+     * @param valeur La valeur du champ à utiliser pour la recherche.
+     * @return Une liste des objets Client trouvés.
+     */
     @Override
     public List<Client> findAllBySomeField(String fieldName, String valeur) {
         List<Client> clients = new ArrayList<>();
@@ -137,6 +163,10 @@ public class DAOClient extends DAOGenerique<Client> {
         return clients;
     }
 
+    /**
+     * Trouve tous les clients dans la base de données.
+     * @return Une liste de tous les objets Client.
+     */
     @Override
     public List<Client> findAll() {
         List<Client> clients = new ArrayList<>();
@@ -158,25 +188,4 @@ public class DAOClient extends DAOGenerique<Client> {
         return clients;
     }
 
-    @Override
-    public List<Client> findByName(String name) {
-        List<Client> clients = new ArrayList<>();
-        try {
-            String query = "SELECT * FROM clients WHERE nom = '"
-                    + name + "'";
-            ResultSet rs = mySQLManager.getData(query);
-            while (rs.next()) {
-                Client client = new Client(
-                        rs.getString("nom"),
-                        rs.getString("prenom"),
-                        rs.getString("adresse"),
-                        rs.getInt("id"));
-                clients.add(client);
-            }
-        } catch (SQLException e) {
-            System.err.println("Erreur SQL lors de la recherche d'un client par nom : "
-                    + e.getMessage());
-        }
-        return clients;
-    }
 }

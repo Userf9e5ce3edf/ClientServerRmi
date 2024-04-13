@@ -9,7 +9,11 @@ import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.util.List;
 
+/**
+ * Classe représentant la page d'achat.
+ */
 public class PageAchat extends JFrame {
+    // Déclaration des composants de l'interface utilisateur
     private JButton retourButton;
     private JList clientsListe;
     private JList famillesListe;
@@ -25,13 +29,22 @@ public class PageAchat extends JFrame {
     private JTextField quantiteARetirertextField;
     private JLabel qtRetirerLabel;
     private JPanel mainPanel;
+
+    // Déclaration des listes pour stocker les données
     private List<Client> clients;
     private List<Composant> composants;
     private List<String> familles;
+
+    // Déclaration des objets pour la gestion des clients et des factures
     private ClientDistant clientDistant;
     private Facture factureEnCours;
     private List<FactureItem> factureItemsEnCours;
     private Client clientEnCours;
+
+    /**
+     * Constructeur de la classe PageAchat.
+     * Initialise les composants de l'interface utilisateur et les gestionnaires d'événements.
+     */
     public PageAchat() {
         try {
             clientDistant = ClientDistant.getInstance();
@@ -47,18 +60,25 @@ public class PageAchat extends JFrame {
 
         RefreshListeClients();
         RefreshListeFamilles();
-
         setContentPane(mainPanel);
         setTitle("Page Achat");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setBounds(10, 10, 840, 300);
         setVisible(true);
+
+        // Gestionnaires d'événements
+
+        // Ajout d'un Listener d'événements à la liste des clients.
+        // Ce Listener est déclenché lorsque la sélection dans la liste des clients change.
         clientsListe.addListSelectionListener(new ListSelectionListener() {
             @Override
             public void valueChanged(ListSelectionEvent e) {
                 loadPanier();
             }
         });
+
+        // Ajout d'un Listener d'événements à la liste des clients.
+        // Ce Listener est déclenché lorsque la sélection dans la liste des clients change.
         famillesListe.addListSelectionListener(new ListSelectionListener() {
             @Override
             public void valueChanged(ListSelectionEvent e) {
@@ -68,6 +88,9 @@ public class PageAchat extends JFrame {
                 }
             }
         });
+
+        // Ajout d'un ActionListener au bouton ajouterAuPanierButton.
+        // Ce Listener est déclenché lorsque le bouton ajouterAuPanierButton est cliqué.
         ajouterAuPanierButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -79,63 +102,83 @@ public class PageAchat extends JFrame {
                     return;
                 }
                 if (composantsListe.getSelectedIndex() != -1) {
-                    int quantite = Integer.parseInt(QuantitetextField.getText());
-                    Composant composant = composants.get(composantsListe.getSelectedIndex());
-
-                    if (composant.getQuantite() < quantite) {
-                        JOptionPane.showMessageDialog(
-                                PageAchat.this,
-                                "Quantité en stock insuffisante",
-                                "Erreur", JOptionPane.ERROR_MESSAGE);
-                        return;
-                    }
-
                     try {
-                        clientDistant.stub.ajouterAuPanier(
-                                composant.getReference(), quantite, clientEnCours.getNom());
-                        loadPanier();
-                        RefreshListeComposants(composant.getFamille());
-                        QuantitetextField.setText("");
-                    } catch (RemoteException ex) {
+                        int quantite = Integer.parseInt(QuantitetextField.getText());
+                        Composant composant = composants.get(composantsListe.getSelectedIndex());
+
+                        if (composant.getQuantite() < quantite) {
+                            JOptionPane.showMessageDialog(
+                                    PageAchat.this,
+                                    "Quantité en stock insuffisante",
+                                    "Erreur", JOptionPane.ERROR_MESSAGE);
+                            return;
+                        }
+
+                        try {
+                            clientDistant.stub.ajouterAuPanier(
+                                    composant.getReference(), quantite, clientEnCours.getNom());
+                            loadPanier();
+                            RefreshListeComposants(composant.getFamille());
+                            QuantitetextField.setText("");
+                        } catch (RemoteException ex) {
+                            JOptionPane.showMessageDialog(
+                                    PageAchat.this,
+                                    "Erreur lors de l'ajout au panier: " +
+                                            ex.getMessage(),
+                                    "Error", JOptionPane.ERROR_MESSAGE);
+                        }
+                    } catch (NumberFormatException ex) {
                         JOptionPane.showMessageDialog(
                                 PageAchat.this,
-                                "Erreur lors de l'ajout au panier: " +
-                                        ex.getMessage(),
-                                "Error", JOptionPane.ERROR_MESSAGE);
+                                "Quantité invalide. Veuillez entrer un nombre valide.",
+                                "Erreur", JOptionPane.ERROR_MESSAGE);
                     }
                 }
             }
         });
+
+        // Ajout d'un ActionListener au bouton retirerButton.
+        // Ce Listener est déclenché lorsque le bouton retirerButton est cliqué.
         retirerButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (panierListe.getSelectedIndex() != -1) {
-                    int quantite = Integer.parseInt(quantiteARetirertextField.getText());
-                    FactureItem factureItem = factureItemsEnCours.get(panierListe.getSelectedIndex());
-
-                    if(factureItem.getQuantite() < quantite) {
-                        JOptionPane.showMessageDialog(
-                                PageAchat.this,
-                                "Quantité insuffisante",
-                                "Erreur", JOptionPane.ERROR_MESSAGE);
-                        return;
-                    }
-
                     try {
-                        clientDistant.stub.retirerDuPanier(quantite, factureItem.getId());
-                        loadPanier();
-                        RefreshListeComposants(factureItem.getComposant().getFamille());
-                        quantiteARetirertextField.setText("");
-                    } catch (RemoteException ex) {
+                        int quantite = Integer.parseInt(quantiteARetirertextField.getText());
+                        FactureItem factureItem = factureItemsEnCours.get(panierListe.getSelectedIndex());
+
+                        if(factureItem.getQuantite() < quantite) {
+                            JOptionPane.showMessageDialog(
+                                    PageAchat.this,
+                                    "Quantité insuffisante",
+                                    "Erreur", JOptionPane.ERROR_MESSAGE);
+                            return;
+                        }
+
+                        try {
+                            clientDistant.stub.retirerDuPanier(quantite, factureItem.getId());
+                            loadPanier();
+                            RefreshListeComposants(factureItem.getComposant().getFamille());
+                            quantiteARetirertextField.setText("");
+                        } catch (RemoteException ex) {
+                            JOptionPane.showMessageDialog(
+                                    PageAchat.this,
+                                    "Erreur lors de la suppression de l'article du panier: " +
+                                            ex.getMessage(),
+                                    "Erreur", JOptionPane.ERROR_MESSAGE);
+                        }
+                    } catch (NumberFormatException ex) {
                         JOptionPane.showMessageDialog(
                                 PageAchat.this,
-                                "Erreur lors de la suppression de l'article du panier: " +
-                                        ex.getMessage(),
+                                "Quantité invalide. Veuillez entrer un nombre valide.",
                                 "Erreur", JOptionPane.ERROR_MESSAGE);
                     }
                 }
             }
         });
+
+        // Ajout d'un ActionListener au bouton acheterButton.
+        // Ce Listener est déclenché lorsque le bouton acheterButton est cliqué.
         acheterButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -149,7 +192,7 @@ public class PageAchat extends JFrame {
                 }
 
                 try {
-                    EnumModeDePaiment[] paymentMethodsEnum = EnumModeDePaiment.values();
+                    EnumModeDePaiement[] paymentMethodsEnum = EnumModeDePaiement.values();
                     String[] paymentMethods = new String[paymentMethodsEnum.length];
                     for (int i = 0; i < paymentMethodsEnum.length; i++) {
                         paymentMethods[i] = paymentMethodsEnum[i].name();
@@ -165,7 +208,7 @@ public class PageAchat extends JFrame {
                     );
 
                     if (selectedPaymentMethod != null) {
-                        EnumModeDePaiment modeDePaiment = EnumModeDePaiment.valueOf(selectedPaymentMethod);
+                        EnumModeDePaiement modeDePaiment = EnumModeDePaiement.valueOf(selectedPaymentMethod);
 
                         boolean result = clientDistant.stub.payerFacture(clientEnCours.getNom(), modeDePaiment);
                         if (!result) {
@@ -185,6 +228,9 @@ public class PageAchat extends JFrame {
                 }
             }
         });
+
+        // Ajout d'un ActionListener au bouton retourButton.
+        // Ce Listener est déclenché lorsque le bouton retourButton est cliqué.
         retourButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -196,6 +242,9 @@ public class PageAchat extends JFrame {
         });
     }
 
+    /**
+     * Méthode pour rafraîchir la liste des clients.
+     */
     private void RefreshListeClients() {
         try {
             clients = clientDistant.stub.getAllClients();
@@ -215,6 +264,9 @@ public class PageAchat extends JFrame {
         clientsListe.setModel(model);
     }
 
+    /**
+     * Méthode pour rafraîchir la liste des familles.
+     */
     private void RefreshListeFamilles() {
         try {
             familles = clientDistant.stub.GetAllFamilles();
@@ -230,6 +282,9 @@ public class PageAchat extends JFrame {
         famillesListe.setListData(familles.toArray());
     }
 
+    /**
+     * Méthode pour charger le panier du client sélectionné.
+     */
     private void loadPanier() {
         DefaultListModel<String> model = new DefaultListModel<>();
         panierListe.setModel(model);
@@ -266,6 +321,10 @@ public class PageAchat extends JFrame {
         }
     }
 
+    /**
+     * Méthode pour rafraîchir la liste des composants en fonction de la famille sélectionnée.
+     * @param famille La famille sélectionnée.
+     */
     private void RefreshListeComposants(String famille) {
         try {
             composants = clientDistant.stub.RechercheComposant(famille);

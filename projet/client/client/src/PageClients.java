@@ -11,7 +11,7 @@ import java.rmi.RemoteException;
 import java.util.List;
 
 public class PageClients extends JFrame {
-    private List<Client> clients;
+    // Déclaration des composants de l'interface utilisateur
     private JList ClientList;
     private JTextField AdressetextField;
     private JTextField NomtextField;
@@ -22,8 +22,15 @@ public class PageClients extends JFrame {
     private JButton retourButton;
     private JPanel mainPanel;
     private JPanel secondPanel;
+
+    // Déclaration des variables
+    private List<Client> clients;
     private ClientDistant clientDistant;
 
+    /**
+     * Constructeur de la classe PageClients.
+     * Initialise les composants de l'interface utilisateur et les gestionnaires d'événements.
+     */
     public PageClients() {
           try {
                 clientDistant = ClientDistant.getInstance();
@@ -44,6 +51,11 @@ public class PageClients extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setBounds(10, 10, 840, 300);
         setVisible(true);
+
+        // Gestionnaires d'événements
+
+        // Ajout d'un ActionListener au bouton Retour
+        // permet de retourner à la page principale
         retourButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -53,6 +65,9 @@ public class PageClients extends JFrame {
                 dispose();
             }
         });
+
+        // Ajout d'un ListSelectionListener à la liste des clients
+        // permet de remplir les champs de texte avec les informations du client sélectionné
         ClientList.addListSelectionListener(new ListSelectionListener() {
             @Override
             public void valueChanged(ListSelectionEvent e) {
@@ -64,6 +79,9 @@ public class PageClients extends JFrame {
                 }
             }
         });
+
+        // Ajout d'un ActionListener au bouton Ajouter
+        // permet d'ajouter un nouveau client
         ajouterButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -81,6 +99,9 @@ public class PageClients extends JFrame {
                 }
             }
         });
+
+        // Ajout d'un ActionListener au bouton Supprimer
+        // permet de supprimer le client sélectionné
         supprimerButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -97,6 +118,9 @@ public class PageClients extends JFrame {
                 }
             }
         });
+
+        // Ajout d'un ActionListener au bouton Modifier
+        // permet de modifier les informations du client sélectionné
         modifierButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -119,12 +143,20 @@ public class PageClients extends JFrame {
         });
     }
 
+    /**
+     * Méthode pour effacer les champs de texte.
+     */
     private void ClearFields() {
         NomtextField.setText("");
         PrenomtextField.setText("");
         AdressetextField.setText("");
     }
 
+    /**
+     * Méthode pour rafraîchir la liste des clients.
+     * Cette méthode récupère tous les clients du serveur et
+     * met à jour la liste des clients dans l'interface utilisateur.
+     */
     private void RefreshListeClients() {
         try {
             clients = clientDistant.stub.getAllClients();

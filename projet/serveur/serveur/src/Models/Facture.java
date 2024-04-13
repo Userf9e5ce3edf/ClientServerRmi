@@ -15,7 +15,7 @@ public class Facture implements Remote, Serializable {
     private int id;
     private final Client client;
     private double totalFacture;
-    private EnumModeDePaiment modeDePaiment;
+    private EnumModeDePaiement modeDePaiment;
     private EnumStatutFacture statutFacture;
 
     /**
@@ -27,7 +27,7 @@ public class Facture implements Remote, Serializable {
      */
     public Facture(Client client,
                    double totalFacture,
-                   EnumModeDePaiment modeDePaiment) {
+                   EnumModeDePaiement modeDePaiment) {
         this.client = client;
         this.totalFacture = totalFacture;
         this.modeDePaiment = modeDePaiment;
@@ -44,7 +44,7 @@ public class Facture implements Remote, Serializable {
      */
     public Facture(int id, Client client,
                    double totalFacture,
-                   EnumModeDePaiment modeDePaiment) {
+                   EnumModeDePaiement modeDePaiment) {
         this.id = id;
         this.client = client;
         this.totalFacture = totalFacture;
@@ -80,7 +80,7 @@ public class Facture implements Remote, Serializable {
      * Getter pour le mode de paiement de la facture.
      * @return Mode de paiement de la facture.
      */
-    public EnumModeDePaiment getModeDePaiment() {
+    public EnumModeDePaiement getModeDePaiment() {
         return modeDePaiment;
     }
 
@@ -96,7 +96,7 @@ public class Facture implements Remote, Serializable {
      * Setter pour le mode de paiement de la facture.
      * @param modeDePaiment Mode de paiement à définir pour la facture.
      */
-    public void setModeDePaiment(EnumModeDePaiment modeDePaiment) {
+    public void setModeDePaiment(EnumModeDePaiement modeDePaiment) {
         this.modeDePaiment = modeDePaiment;
     }
 
