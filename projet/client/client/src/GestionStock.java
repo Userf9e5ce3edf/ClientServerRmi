@@ -38,10 +38,14 @@ public class GestionStock extends JFrame {
             JOptionPane.showMessageDialog(this,
                     "Erreur: " + e.getMessage(), "Erreur",
                     JOptionPane.ERROR_MESSAGE);
-            PagePrincipale pagePrincipale = new PagePrincipale();
-            pagePrincipale.setVisible(true);
-            dispose();
-            return; // pour etre sur que le code ne s'execute pas
+           PagePrincipale pagePrincipale = new PagePrincipale();
+           pagePrincipale.setVisible(true);
+            SwingUtilities.invokeLater(new Runnable() {
+                public void run() {
+                    dispose();
+                }
+            });
+            return;
         }
 
         RefreshListeFamille();
@@ -58,8 +62,11 @@ public class GestionStock extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 PagePrincipale pagePrincipale = new PagePrincipale();
                 pagePrincipale.setVisible(true);
-
-                dispose();
+                SwingUtilities.invokeLater(new Runnable() {
+                    public void run() {
+                        dispose();
+                    }
+                });
             }
         });
 
@@ -146,9 +153,11 @@ public class GestionStock extends JFrame {
             JOptionPane.showMessageDialog(
                     this, "Erreur lors du chargement des familles: " +
                             e.getMessage(), "Erreur", JOptionPane.ERROR_MESSAGE);
-            PagePrincipale pagePrincipale = new PagePrincipale();
-            pagePrincipale.setVisible(true);
-            dispose();
+            SwingUtilities.invokeLater(new Runnable() {
+                public void run() {
+                    dispose();
+                }
+            });
             return;
         }
         FamillesList.setListData(familles.toArray());

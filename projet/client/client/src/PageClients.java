@@ -40,8 +40,12 @@ public class PageClients extends JFrame {
                         JOptionPane.ERROR_MESSAGE);
               PagePrincipale pagePrincipale = new PagePrincipale();
               pagePrincipale.setVisible(true);
-                dispose();
-                return; // pour etre sur que le code ne s'execute pas
+              SwingUtilities.invokeLater(new Runnable() {
+                  public void run() {
+                      dispose();
+                  }
+              });
+              return;
             }
 
         RefreshListeClients();
@@ -61,8 +65,11 @@ public class PageClients extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 PagePrincipale pagePrincipale = new PagePrincipale();
                 pagePrincipale.setVisible(true);
-
-                dispose();
+                SwingUtilities.invokeLater(new Runnable() {
+                    public void run() {
+                        dispose();
+                    }
+                });
             }
         });
 
@@ -164,9 +171,11 @@ public class PageClients extends JFrame {
             JOptionPane.showMessageDialog(
                     this, "Erreur lors du chargement des clients: " +
                             e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-            PagePrincipale pagePrincipale = new PagePrincipale();
-            pagePrincipale.setVisible(true);
-            dispose();
+            SwingUtilities.invokeLater(new Runnable() {
+                public void run() {
+                    dispose();
+                }
+            });
             return;
         }
         DefaultListModel<String> model = new DefaultListModel<>();

@@ -37,7 +37,11 @@ public class PagePrincipale extends JFrame {
                 PageClients pageClients = new PageClients();
                 pageClients.setVisible(true);
 
-                dispose();
+                SwingUtilities.invokeLater(new Runnable() {
+                    public void run() {
+                        dispose();
+                    }
+                });
             }
         });
 
@@ -49,7 +53,11 @@ public class PagePrincipale extends JFrame {
                 PageAchat pageAchat = new PageAchat();
                 pageAchat.setVisible(true);
 
-                dispose();
+                SwingUtilities.invokeLater(new Runnable() {
+                    public void run() {
+                        dispose();
+                    }
+                });
             }
         });
 
@@ -61,7 +69,11 @@ public class PagePrincipale extends JFrame {
                 GestionStock gestionStock = new GestionStock();
                 gestionStock.setVisible(true);
 
-                dispose();
+                SwingUtilities.invokeLater(new Runnable() {
+                    public void run() {
+                        dispose();
+                    }
+                });
             }
         });
 

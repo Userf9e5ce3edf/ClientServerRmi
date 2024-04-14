@@ -54,7 +54,11 @@ public class PageAchat extends JFrame {
                     JOptionPane.ERROR_MESSAGE);
             PagePrincipale pagePrincipale = new PagePrincipale();
             pagePrincipale.setVisible(true);
-            dispose();
+            SwingUtilities.invokeLater(new Runnable() {
+                public void run() {
+                    dispose();
+                }
+            });
             return; // pour etre sur que le code ne s'execute pas
         }
 
@@ -236,8 +240,11 @@ public class PageAchat extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 PagePrincipale pagePrincipale = new PagePrincipale();
                 pagePrincipale.setVisible(true);
-
-                dispose();
+                SwingUtilities.invokeLater(new Runnable() {
+                    public void run() {
+                        dispose();
+                    }
+                });
             }
         });
     }
@@ -252,10 +259,11 @@ public class PageAchat extends JFrame {
             JOptionPane.showMessageDialog(
                     this, "Erreur lors du chargement des clients: " +
                             e.getMessage(), "Erreur", JOptionPane.ERROR_MESSAGE);
-            PagePrincipale pagePrincipale = new PagePrincipale();
-            pagePrincipale.setVisible(true);
-            dispose();
-            return;
+            SwingUtilities.invokeLater(new Runnable() {
+                public void run() {
+                    dispose();
+                }
+            });
         }
         DefaultListModel<String> model = new DefaultListModel<>();
         for (Client client : clients) {
@@ -276,8 +284,12 @@ public class PageAchat extends JFrame {
                             e.getMessage(), "Erreur", JOptionPane.ERROR_MESSAGE);
             PagePrincipale pagePrincipale = new PagePrincipale();
             pagePrincipale.setVisible(true);
-            dispose();
-            return;
+            SwingUtilities.invokeLater(new Runnable() {
+                public void run() {
+                    dispose();
+                }
+            });
+            return; // pour etre sur que le code ne s'execute pas
         }
         famillesListe.setListData(familles.toArray());
     }
