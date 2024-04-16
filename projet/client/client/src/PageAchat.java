@@ -36,7 +36,7 @@ public class PageAchat extends JFrame {
     private List<String> familles;
 
     // Déclaration des objets pour la gestion des clients et des factures
-    private ClientDistant clientDistant;
+    private ServeurDistant serveurDistant;
     private Facture factureEnCours;
     private List<FactureItem> factureItemsEnCours;
     private Client clientEnCours;
@@ -47,7 +47,7 @@ public class PageAchat extends JFrame {
      */
     public PageAchat() {
         try {
-            clientDistant = ClientDistant.getInstance();
+            serveurDistant = ServeurDistant.getInstance();
         } catch (RemoteException | NotBoundException e) {
             JOptionPane.showMessageDialog(this,
                     "Erreur: " + e.getMessage(), "Erreur",
@@ -119,7 +119,7 @@ public class PageAchat extends JFrame {
                         }
 
                         try {
-                            clientDistant.stub.ajouterAuPanier(
+                            serveurDistant.stub.ajouterAuPanier(
                                     composant.getReference(), quantite, clientEnCours.getNom());
                             loadPanier();
                             RefreshListeComposants(composant.getFamille());
@@ -160,7 +160,7 @@ public class PageAchat extends JFrame {
                         }
 
                         try {
-                            clientDistant.stub.retirerDuPanier(quantite, factureItem.getId());
+                            serveurDistant.stub.retirerDuPanier(quantite, factureItem.getId());
                             loadPanier();
                             RefreshListeComposants(factureItem.getComposant().getFamille());
                             quantiteARetirertextField.setText("");
@@ -214,7 +214,7 @@ public class PageAchat extends JFrame {
                     if (selectedPaymentMethod != null) {
                         EnumModeDePaiement modeDePaiment = EnumModeDePaiement.valueOf(selectedPaymentMethod);
 
-                        boolean result = clientDistant.stub.payerFacture(clientEnCours.getNom(), modeDePaiment);
+                        boolean result = serveurDistant.stub.payerFacture(clientEnCours.getNom(), modeDePaiment);
                         if (!result) {
                             JOptionPane.showMessageDialog(
                                     PageAchat.this,
@@ -254,7 +254,7 @@ public class PageAchat extends JFrame {
      */
     private void RefreshListeClients() {
         try {
-            clients = clientDistant.stub.getAllClients();
+            clients = serveurDistant.stub.getAllClients();
         } catch (RemoteException e) {
             JOptionPane.showMessageDialog(
                     this, "Erreur lors du chargement des clients: " +
@@ -277,7 +277,7 @@ public class PageAchat extends JFrame {
      */
     private void RefreshListeFamilles() {
         try {
-            familles = clientDistant.stub.GetAllFamilles();
+            familles = serveurDistant.stub.GetAllFamilles();
         } catch (RemoteException e) {
             JOptionPane.showMessageDialog(
                     this, "Erreur lors du chargement des familles: " +
@@ -308,10 +308,10 @@ public class PageAchat extends JFrame {
             clientLabel.setText(client);
 
             try {
-                factureEnCours = clientDistant.stub.getFactureEnCours(clientEnCours.getId());
+                factureEnCours = serveurDistant.stub.getFactureEnCours(clientEnCours.getId());
                 if(factureEnCours != null) {
                     totalPrixLabel.setText(String.valueOf(factureEnCours.getTotalFacture()));
-                    factureItemsEnCours = clientDistant.stub.getAllFactureItem(factureEnCours.getId());
+                    factureItemsEnCours = serveurDistant.stub.getAllFactureItem(factureEnCours.getId());
                     if(factureEnCours != null) {
                         model = new DefaultListModel<>();
                         for (FactureItem factureItem : factureItemsEnCours) {
@@ -339,7 +339,7 @@ public class PageAchat extends JFrame {
      */
     private void RefreshListeComposants(String famille) {
         try {
-            composants = clientDistant.stub.RechercheComposant(famille);
+            composants = serveurDistant.stub.RechercheComposant(famille);
             DefaultListModel<String> model = new DefaultListModel<>();
             for (Composant composant : composants) {
                 model.addElement(composant.getReference()

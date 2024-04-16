@@ -1,3 +1,5 @@
+CREATE DATABASE  IF NOT EXISTS `magasin` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
+USE `magasin`;
 -- MySQL dump 10.13  Distrib 8.0.36, for Win64 (x86_64)
 --
 -- Host: localhost    Database: magasin
@@ -38,7 +40,7 @@ CREATE TABLE `composants` (
 
 LOCK TABLES `composants` WRITE;
 /*!40000 ALTER TABLE `composants` DISABLE KEYS */;
-INSERT INTO `composants` VALUES (1,'COMP1',75,'Electronics',10),(2,'COMP2',26,'Electronics',20),(3,'COMP11',20,'Electronics',30),(4,'COMP12',20,'Electronics',40),(5,'COMP21',95,'Mechanics',50),(6,'COMP22',84,'Mechanics',60),(7,'COMP31',45,'Chemistry',70),(8,'COMP32',47,'Chemistry',80),(9,'COMP41',70,'Physics',90),(10,'COMP42',80,'Physics',100),(11,'COMP51',100,'Biology',110),(12,'COMP52',73,'Biology',120);
+INSERT INTO `composants` VALUES (1,'COMP1',72,'Electronics',10),(2,'COMP2',24,'Electronics',20),(3,'COMP11',20,'Electronics',30),(4,'COMP12',50,'Electronics',40),(5,'COMP21',95,'Mechanics',50),(6,'COMP22',89,'Mechanics',60),(7,'COMP31',45,'Chemistry',70),(8,'COMP32',47,'Chemistry',80),(9,'COMP41',70,'Physics',90),(10,'COMP42',80,'Physics',100),(11,'COMP51',100,'Biology',110),(12,'COMP52',73,'Biology',120);
 /*!40000 ALTER TABLE `composants` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -51,4 +53,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-04-13 22:36:33
+-- Dump completed on 2024-04-16 17:05:15

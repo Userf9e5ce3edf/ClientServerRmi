@@ -1,4 +1,4 @@
-import Models.ClientDistant;
+import Models.ServeurDistant;
 import Models.Composant;
 
 import javax.swing.*;
@@ -26,14 +26,14 @@ public class GestionStock extends JFrame {
     // Déclaration des variables
     private List<Composant> composants;
     private List<String> familles;
-    private ClientDistant clientDistant;
+    private ServeurDistant serveurDistant;
 
     /**
      * Constructeur de la classe GestionStock.
      */
     public GestionStock() {
         try {
-            clientDistant = ClientDistant.getInstance();
+            serveurDistant = ServeurDistant.getInstance();
         } catch (RemoteException | NotBoundException e) {
             JOptionPane.showMessageDialog(this,
                     "Erreur: " + e.getMessage(), "Erreur",
@@ -130,7 +130,7 @@ public class GestionStock extends JFrame {
                 }
                 // si la nouvelle quantite est 100 ou moins, mettre a jour la bdd et refresh le front
                 try {
-                    clientDistant.stub.ajouterComposant(selectedComposant.getReference(), quantite);
+                    serveurDistant.stub.ajouterComposant(selectedComposant.getReference(), quantite);
                     RefreshListeComposants(selectedComposant.getFamille());
                 } catch (RemoteException ex) {
                     JOptionPane.showMessageDialog(
@@ -148,7 +148,7 @@ public class GestionStock extends JFrame {
      */
     private void RefreshListeFamille() {
         try {
-            familles = clientDistant.stub.GetAllFamilles();
+            familles = serveurDistant.stub.GetAllFamilles();
         } catch (RemoteException e) {
             JOptionPane.showMessageDialog(
                     this, "Erreur lors du chargement des familles: " +
@@ -169,7 +169,7 @@ public class GestionStock extends JFrame {
      */
     private void RefreshListeComposants(String famille) {
         try {
-            composants = clientDistant.stub.RechercheComposant(famille);
+            composants = serveurDistant.stub.RechercheComposant(famille);
             DefaultListModel<String> model = new DefaultListModel<>();
             for (Composant composant : composants) {
                 model.addElement(composant.getReference()

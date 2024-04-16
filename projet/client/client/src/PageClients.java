@@ -1,5 +1,5 @@
 import Models.Client;
-import Models.ClientDistant;
+import Models.ServeurDistant;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
@@ -25,7 +25,7 @@ public class PageClients extends JFrame {
 
     // Déclaration des variables
     private List<Client> clients;
-    private ClientDistant clientDistant;
+    private ServeurDistant serveurDistant;
 
     /**
      * Constructeur de la classe PageClients.
@@ -33,7 +33,7 @@ public class PageClients extends JFrame {
      */
     public PageClients() {
           try {
-                clientDistant = ClientDistant.getInstance();
+                serveurDistant = ServeurDistant.getInstance();
             } catch (RemoteException | NotBoundException e) {
                 JOptionPane.showMessageDialog(this,
                         "Erreur: " + e.getMessage(), "Erreur",
@@ -96,7 +96,7 @@ public class PageClients extends JFrame {
                 String prenom = PrenomtextField.getText();
                 String adresse = AdressetextField.getText();
                 try {
-                    clientDistant.stub.createClient(nom, prenom, adresse);
+                    serveurDistant.stub.createClient(nom, prenom, adresse);
                     RefreshListeClients();
                     ClearFields();
                 } catch (RemoteException ex) {
@@ -114,7 +114,7 @@ public class PageClients extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 if (ClientList.getSelectedIndex() != -1) {
                     try {
-                        clientDistant.stub.deleteClient(clients.get(ClientList.getSelectedIndex()).getId());
+                        serveurDistant.stub.deleteClient(clients.get(ClientList.getSelectedIndex()).getId());
                         RefreshListeClients();
                         ClearFields();
                     } catch (RemoteException ex) {
@@ -137,7 +137,7 @@ public class PageClients extends JFrame {
                     String prenom = PrenomtextField.getText();
                     String adresse = AdressetextField.getText();
                     try {
-                        clientDistant.stub.updateClient(id, nom, prenom, adresse);
+                        serveurDistant.stub.updateClient(id, nom, prenom, adresse);
                         RefreshListeClients();
                         ClearFields();
                     } catch (RemoteException ex) {
@@ -166,7 +166,7 @@ public class PageClients extends JFrame {
      */
     private void RefreshListeClients() {
         try {
-            clients = clientDistant.stub.getAllClients();
+            clients = serveurDistant.stub.getAllClients();
         } catch (RemoteException e) {
             JOptionPane.showMessageDialog(
                     this, "Erreur lors du chargement des clients: " +

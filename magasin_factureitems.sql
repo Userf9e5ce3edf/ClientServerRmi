@@ -1,3 +1,5 @@
+CREATE DATABASE  IF NOT EXISTS `magasin` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
+USE `magasin`;
 -- MySQL dump 10.13  Distrib 8.0.36, for Win64 (x86_64)
 --
 -- Host: localhost    Database: magasin
@@ -32,7 +34,7 @@ CREATE TABLE `factureitems` (
   KEY `idfacture` (`idfacture`),
   CONSTRAINT `factureitems_ibfk_1` FOREIGN KEY (`idcomposant`) REFERENCES `composants` (`id`),
   CONSTRAINT `factureitems_ibfk_2` FOREIGN KEY (`idfacture`) REFERENCES `factures` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=44 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=50 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -41,7 +43,7 @@ CREATE TABLE `factureitems` (
 
 LOCK TABLES `factureitems` WRITE;
 /*!40000 ALTER TABLE `factureitems` DISABLE KEYS */;
-INSERT INTO `factureitems` VALUES (43,6,36,5);
+INSERT INTO `factureitems` VALUES (43,6,36,5),(45,1,38,5),(46,1,39,3),(48,1,40,10),(49,2,40,2);
 /*!40000 ALTER TABLE `factureitems` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -54,4 +56,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-04-13 22:36:34
+-- Dump completed on 2024-04-16 17:05:15

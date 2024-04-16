@@ -1,4 +1,4 @@
-import Models.ClientDistant;
+import Models.ServeurDistant;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -90,7 +90,7 @@ public class PagePrincipale extends JFrame {
 
                 if (isValidIP(hostIP)) {
                     if (isReachable(hostIP)) {
-                        ClientDistant.setHostIP(hostIP);
+                        ServeurDistant.setHostIP(hostIP);
                     } else {
                         JOptionPane.showMessageDialog(
                                 null, "adresse ip inatteignable");
