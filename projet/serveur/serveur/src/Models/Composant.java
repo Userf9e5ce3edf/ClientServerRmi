@@ -10,11 +10,11 @@ import java.io.Serializable;
 public class Composant implements Serializable {
     @Serial
     private static final long serialVersionUID = 2L;
-    public int id;
-    public String reference;
-    public String famille;
-    public float prix;
-    public int quantite;
+    private int id;
+    private String reference;
+    private String famille;
+    private float prix;
+    private int quantite;
 
     /**
      * Constructeur pour initialiser un Composant avec référence, famille, prix et quantité.
@@ -60,6 +60,14 @@ public class Composant implements Serializable {
      */
     public int getQuantite() {
         return quantite;
+    }
+
+    /**
+     * Setter pour la quantite du composant.
+     * @param quantite Quantite à définir pour le composant.
+     */
+    public void setQuantite(int quantite) {
+        this.quantite = quantite;
     }
 
     /**

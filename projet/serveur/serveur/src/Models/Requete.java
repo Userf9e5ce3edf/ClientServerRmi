@@ -33,7 +33,7 @@ public class Requete implements IRequete, Serializable {
         List<Composant> composants = daoComposant.findAllBySomeField("famille", famille);
         List<Composant> availableComposants = new ArrayList<>();
         for (Composant composant : composants) {
-            if (composant.quantite > 0) {
+            if (composant.getQuantite() > 0) {
                 availableComposants.add(composant);
             }
         }
@@ -43,7 +43,7 @@ public class Requete implements IRequete, Serializable {
     public boolean ajouterComposant(String refComposant, int quantite) throws RemoteException {
         Composant composant = daoComposant.findBySomeField("reference",refComposant);
         if (composant != null) {
-            composant.quantite += quantite;
+            composant.setQuantite(composant.getQuantite() + quantite);
             daoComposant.update(composant);
             return true;
         }
@@ -55,13 +55,13 @@ public class Requete implements IRequete, Serializable {
         if (composant == null) {
             return false;
         }
-        int nouvelleQuantite = composant.quantite - quantite;
+        int nouvelleQuantite = composant.getQuantite() - quantite;
 
         if (nouvelleQuantite < 0) {
             return false;
         }
 
-        composant.quantite -= quantite;
+        composant.setQuantite(composant.getQuantite() - quantite);
         Composant updatedComposant = daoComposant.update(composant);
         if (updatedComposant == null) {
             return false;
@@ -137,24 +137,17 @@ public class Requete implements IRequete, Serializable {
         FactureItem factureItem = daoFactureItem.findById(String.valueOf(id));
         if (factureItem != null) {
             Composant composant = factureItem.getComposant();
-            composant.quantite += quantite;
+            composant.setQuantite(composant.getQuantite() + quantite);
             daoComposant.update(composant);
 
-            // Update the totalFacture of the Facture
+            // mise a jour du totalFacture de la Facture
             double costOfRemovedItems = factureItem.getComposant().getPrix() * quantite;
-
-            System.out.println("costOfRemovedItems: " + costOfRemovedItems);
-
             Facture facture = daoFacture.findById(String.valueOf(factureItem.getFacture().getId()));
-
-            System.out.println(facture.toString());
 
             facture.setTotalFacture(facture.getTotalFacture() - costOfRemovedItems);
             Facture test = daoFacture.update(facture);
 
-            System.out.println("caca" + test.toString());
-
-            // Update the quantity of the FactureItem, delete only if the quantity is 0
+            // mise a jour de la quantité FactureItem, supprime si quantité est 0
             factureItem.setQuantite(factureItem.getQuantite() - quantite);
             if (factureItem.getQuantite() == 0) {
                 daoFactureItem.delete(factureItem);
