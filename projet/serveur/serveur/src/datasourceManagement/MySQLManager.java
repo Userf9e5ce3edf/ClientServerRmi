@@ -2,6 +2,9 @@ package datasourceManagement;
 
 import java.sql.*;
 
+/**
+ * Cette classe gère la connexion à la base de données MySQL.
+ */
 public class MySQLManager {
     private static MySQLManager instance = null;
     private final String url = "jdbc:mysql://localhost:3306/magasin";
@@ -9,19 +12,37 @@ public class MySQLManager {
     private final String password = "root";
     private Connection conn = null;
 
+    /**
+     * Constructeur privé pour initialiser la connexion à la base de données.
+     */
     private MySQLManager() {
         connexion();
     }
 
+    /**
+     * Méthode pour obtenir une instance de MySQLManager (Singleton).
+     * @return Une instance de MySQLManager.
+     */
     public static synchronized MySQLManager getInstance() {
         if (instance == null) {
             instance = new MySQLManager();
         }
         return instance;
     }
+
+    /**
+     * Prépare une déclaration SQL.
+     * @param query La requête SQL à préparer.
+     * @return Une déclaration SQL préparée.
+     * @throws SQLException Si une exception SQL se produit.
+     */
     public PreparedStatement prepareStatement(String query) throws SQLException {
         return conn.prepareStatement(query);
     }
+
+    /**
+     * Établit la connexion à la base de données.
+     */
     private void connexion()
     {
         try {
@@ -33,6 +54,11 @@ public class MySQLManager {
         }
     }
 
+    /**
+     * Récupère les données de la base de données en fonction de la requête SQL fournie.
+     * @param req La requête SQL.
+     * @return Un ResultSet contenant les données récupérées.
+     */
     public ResultSet getData(String req)
     {
         Statement stmt = null;
@@ -50,6 +76,11 @@ public class MySQLManager {
         return rs;
     }
 
+    /**
+     * Met à jour les données dans la base de données en fonction de la requête SQL fournie.
+     * @param req La requête SQL.
+     * @return Un entier représentant le nombre de lignes affectées par la mise à jour.
+     */
     public int setData(String req)
     {
         int res=0;

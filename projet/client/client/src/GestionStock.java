@@ -1,15 +1,20 @@
-import Models.Client;
+import Models.ServeurDistant;
 import Models.Composant;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.util.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+/**
+ * Classe pour gérer le stock des composants.
+ */
 public class GestionStock extends JFrame {
+    // Déclaration des composants de l'interface utilisateur
     private JList FamillesList;
     private JList ComposantsList;
     private JLabel AjoutLabel;
@@ -17,11 +22,31 @@ public class GestionStock extends JFrame {
     private JButton AjouterButton;
     private JButton RetourButton;
     private JPanel mainPanel;
+
+    // Déclaration des variables
     private List<Composant> composants;
     private List<String> familles;
-    private ClientDistant clientDistant = new ClientDistant();
+    private ServeurDistant serveurDistant;
 
+    /**
+     * Constructeur de la classe GestionStock.
+     */
     public GestionStock() {
+        try {
+            serveurDistant = ServeurDistant.getInstance();
+        } catch (RemoteException | NotBoundException e) {
+            JOptionPane.showMessageDialog(this,
+                    "Erreur: " + e.getMessage(), "Erreur",
+                    JOptionPane.ERROR_MESSAGE);
+           PagePrincipale pagePrincipale = new PagePrincipale();
+           pagePrincipale.setVisible(true);
+            SwingUtilities.invokeLater(new Runnable() {
+                public void run() {
+                    dispose();
+                }
+            });
+            return;
+        }
 
         RefreshListeFamille();
 
@@ -31,16 +56,23 @@ public class GestionStock extends JFrame {
         setBounds(10, 10, 840, 300);
         setVisible(true);
 
+        // Ajout d'un ActionListener au bouton Retour
         RetourButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 PagePrincipale pagePrincipale = new PagePrincipale();
                 pagePrincipale.setVisible(true);
-
-                dispose();
+                SwingUtilities.invokeLater(new Runnable() {
+                    public void run() {
+                        dispose();
+                    }
+                });
             }
         });
 
+        // Gestionnaires d'événements
+
+        // Ajout d'un ListSelectionListener à la liste des familles
         FamillesList.addListSelectionListener(new ListSelectionListener() {
             @Override
             public void valueChanged(ListSelectionEvent e) {
@@ -50,21 +82,29 @@ public class GestionStock extends JFrame {
                 }
             }
         });
+
+        // Ajout d'un ActionListener au bouton Ajouter
         AjouterButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                // Get the quantity from the text field
+
                 String quantityText = QuantiteTextField.getText();
 
-                // Check if the quantity is a number if not return;
                 int quantite;
                 try {
                     quantite = Integer.parseInt(quantityText);
+                    if(quantite <= 0) {
+                        JOptionPane.showMessageDialog(
+                            GestionStock.this,
+                            "La quantité doit être plus supérieur à 0.",
+                            "Erreur", JOptionPane.ERROR_MESSAGE);
+                        return;
+                    }
                 } catch (NumberFormatException ex) {
                     JOptionPane.showMessageDialog(
                             GestionStock.this,
-                            "Invalid quantity. Please enter a number.",
-                            "Error", JOptionPane.ERROR_MESSAGE);
+                            "Quantité invalide. Saisir un chiffre.",
+                            "Erreur", JOptionPane.ERROR_MESSAGE);
                     return;
                 }
 
@@ -73,53 +113,63 @@ public class GestionStock extends JFrame {
                 if (selectedIndex == -1) {
                     JOptionPane.showMessageDialog(
                             GestionStock.this,
-                            "No composant selected.",
-                            "Error", JOptionPane.ERROR_MESSAGE);
+                            "Aucun composant selectionner.",
+                            "Erreur", JOptionPane.ERROR_MESSAGE);
                     return;
                 }
                 Composant selectedComposant = composants.get(selectedIndex);
 
-                // Check if the new quantity is above 100 if yes show a message and then return
+                // si la nouvelle quantité est plus de 100, afficher une erreur
                 int newQuantite = selectedComposant.getQuantite() + quantite;
                 if (newQuantite > 100) {
                     JOptionPane.showMessageDialog(
                             GestionStock.this,
-                            "Quantity cannot be more than 100.",
-                            "Error", JOptionPane.ERROR_MESSAGE);
+                            "La nouvelle quantité ne peut pas dépasser 100.",
+                            "Erreur", JOptionPane.ERROR_MESSAGE);
                     return;
                 }
-                // if the new quantity is 100 or below, update the composant in the database and then refresh the list
+                // si la nouvelle quantite est 100 ou moins, mettre a jour la bdd et refresh le front
                 try {
-                    clientDistant.stub.ajouterComposant(selectedComposant.getReference(), quantite);
+                    serveurDistant.stub.ajouterComposant(selectedComposant.getReference(), quantite);
                     RefreshListeComposants(selectedComposant.getFamille());
                 } catch (RemoteException ex) {
                     JOptionPane.showMessageDialog(
                             GestionStock.this,
-                            "Error updating composant: " + ex.getMessage(),
-                            "Error", JOptionPane.ERROR_MESSAGE);
+                            "Erreur lors de la mise à jour du composant: " + ex.getMessage(),
+                            "Erreur", JOptionPane.ERROR_MESSAGE);
                 }
                 QuantiteTextField.setText("");
             }
         });
     }
+
+    /**
+     * Méthode pour rafraîchir la liste des familles.
+     */
     private void RefreshListeFamille() {
         try {
-            familles = clientDistant.stub.GetAllFamilles();
+            familles = serveurDistant.stub.GetAllFamilles();
         } catch (RemoteException e) {
             JOptionPane.showMessageDialog(
-                    this, "Erreur lors du chargement des clients: " +
-                            e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-            PagePrincipale pagePrincipale = new PagePrincipale();
-            pagePrincipale.setVisible(true);
-            dispose();
+                    this, "Erreur lors du chargement des familles: " +
+                            e.getMessage(), "Erreur", JOptionPane.ERROR_MESSAGE);
+            SwingUtilities.invokeLater(new Runnable() {
+                public void run() {
+                    dispose();
+                }
+            });
             return;
         }
         FamillesList.setListData(familles.toArray());
     }
 
+    /**
+     * Méthode pour rafraîchir la liste des composants en fonction de la famille sélectionnée.
+     * @param famille La famille sélectionnée.
+     */
     private void RefreshListeComposants(String famille) {
         try {
-            composants = clientDistant.stub.RechercheComposant(famille);
+            composants = serveurDistant.stub.RechercheComposant(famille);
             DefaultListModel<String> model = new DefaultListModel<>();
             for (Composant composant : composants) {
                 model.addElement(composant.getReference()
@@ -131,8 +181,8 @@ public class GestionStock extends JFrame {
             ComposantsList.setModel(model);
         } catch (RemoteException ex) {
             JOptionPane.showMessageDialog(
-                    GestionStock.this, "Erreur lors de la modification du client: " +
-                            ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                    GestionStock.this, "Erreur lors du chargement des composants: " +
+                            ex.getMessage(), "Erreur", JOptionPane.ERROR_MESSAGE);
         }
     }
 }

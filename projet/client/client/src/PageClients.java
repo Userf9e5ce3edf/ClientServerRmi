@@ -1,17 +1,17 @@
-import Interfaces.IClient;
-import Interfaces.IRequete;
 import Models.Client;
+import Models.ServeurDistant;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.util.List;
 
 public class PageClients extends JFrame {
-    private List<Client> clients;
+    // Déclaration des composants de l'interface utilisateur
     private JList ClientList;
     private JTextField AdressetextField;
     private JTextField NomtextField;
@@ -22,9 +22,31 @@ public class PageClients extends JFrame {
     private JButton retourButton;
     private JPanel mainPanel;
     private JPanel secondPanel;
-    private ClientDistant clientDistant = new ClientDistant();
 
+    // Déclaration des variables
+    private List<Client> clients;
+    private ServeurDistant serveurDistant;
+
+    /**
+     * Constructeur de la classe PageClients.
+     * Initialise les composants de l'interface utilisateur et les gestionnaires d'événements.
+     */
     public PageClients() {
+          try {
+                serveurDistant = ServeurDistant.getInstance();
+            } catch (RemoteException | NotBoundException e) {
+                JOptionPane.showMessageDialog(this,
+                        "Erreur: " + e.getMessage(), "Erreur",
+                        JOptionPane.ERROR_MESSAGE);
+              PagePrincipale pagePrincipale = new PagePrincipale();
+              pagePrincipale.setVisible(true);
+              SwingUtilities.invokeLater(new Runnable() {
+                  public void run() {
+                      dispose();
+                  }
+              });
+              return;
+            }
 
         RefreshListeClients();
 
@@ -33,15 +55,26 @@ public class PageClients extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setBounds(10, 10, 840, 300);
         setVisible(true);
+
+        // Gestionnaires d'événements
+
+        // Ajout d'un ActionListener au bouton Retour
+        // permet de retourner à la page principale
         retourButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 PagePrincipale pagePrincipale = new PagePrincipale();
                 pagePrincipale.setVisible(true);
-
-                dispose();
+                SwingUtilities.invokeLater(new Runnable() {
+                    public void run() {
+                        dispose();
+                    }
+                });
             }
         });
+
+        // Ajout d'un ListSelectionListener à la liste des clients
+        // permet de remplir les champs de texte avec les informations du client sélectionné
         ClientList.addListSelectionListener(new ListSelectionListener() {
             @Override
             public void valueChanged(ListSelectionEvent e) {
@@ -53,6 +86,9 @@ public class PageClients extends JFrame {
                 }
             }
         });
+
+        // Ajout d'un ActionListener au bouton Ajouter
+        // permet d'ajouter un nouveau client
         ajouterButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -60,7 +96,7 @@ public class PageClients extends JFrame {
                 String prenom = PrenomtextField.getText();
                 String adresse = AdressetextField.getText();
                 try {
-                    clientDistant.stub.createClient(nom, prenom, adresse);
+                    serveurDistant.stub.createClient(nom, prenom, adresse);
                     RefreshListeClients();
                     ClearFields();
                 } catch (RemoteException ex) {
@@ -70,12 +106,15 @@ public class PageClients extends JFrame {
                 }
             }
         });
+
+        // Ajout d'un ActionListener au bouton Supprimer
+        // permet de supprimer le client sélectionné
         supprimerButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (ClientList.getSelectedIndex() != -1) {
                     try {
-                        clientDistant.stub.deleteClient(clients.get(ClientList.getSelectedIndex()).getId());
+                        serveurDistant.stub.deleteClient(clients.get(ClientList.getSelectedIndex()).getId());
                         RefreshListeClients();
                         ClearFields();
                     } catch (RemoteException ex) {
@@ -86,6 +125,9 @@ public class PageClients extends JFrame {
                 }
             }
         });
+
+        // Ajout d'un ActionListener au bouton Modifier
+        // permet de modifier les informations du client sélectionné
         modifierButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -95,7 +137,7 @@ public class PageClients extends JFrame {
                     String prenom = PrenomtextField.getText();
                     String adresse = AdressetextField.getText();
                     try {
-                        clientDistant.stub.updateClient(id, nom, prenom, adresse);
+                        serveurDistant.stub.updateClient(id, nom, prenom, adresse);
                         RefreshListeClients();
                         ClearFields();
                     } catch (RemoteException ex) {
@@ -108,22 +150,32 @@ public class PageClients extends JFrame {
         });
     }
 
+    /**
+     * Méthode pour effacer les champs de texte.
+     */
     private void ClearFields() {
         NomtextField.setText("");
         PrenomtextField.setText("");
         AdressetextField.setText("");
     }
 
+    /**
+     * Méthode pour rafraîchir la liste des clients.
+     * Cette méthode récupère tous les clients du serveur et
+     * met à jour la liste des clients dans l'interface utilisateur.
+     */
     private void RefreshListeClients() {
         try {
-            clients = clientDistant.stub.getAllClients();
+            clients = serveurDistant.stub.getAllClients();
         } catch (RemoteException e) {
             JOptionPane.showMessageDialog(
                     this, "Erreur lors du chargement des clients: " +
                             e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-            PagePrincipale pagePrincipale = new PagePrincipale();
-            pagePrincipale.setVisible(true);
-            dispose();
+            SwingUtilities.invokeLater(new Runnable() {
+                public void run() {
+                    dispose();
+                }
+            });
             return;
         }
         DefaultListModel<String> model = new DefaultListModel<>();

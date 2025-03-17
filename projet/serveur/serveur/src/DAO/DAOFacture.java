@@ -3,7 +3,7 @@ package DAO;
 import Models.EnumStatutFacture;
 import Models.Facture;
 import Models.Client;
-import Models.EnumModeDePaiment;
+import Models.EnumModeDePaiement;
 import datasourceManagement.MySQLManager;
 
 import java.sql.ResultSet;
@@ -11,9 +11,18 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Classe DAOFacture qui hérite de DAOGenerique.
+ * Cette classe permet de manipuler les données de la table 'factures' dans la base de données.
+ */
 public class DAOFacture extends DAOGenerique<Facture> {
     private MySQLManager mySQLManager = MySQLManager.getInstance();
 
+    /**
+     * Crée une nouvelle facture dans la base de données.
+     * @param facture L'objet Facture à ajouter dans la base de données.
+     * @return L'objet Facture avec l'ID généré.
+     */
     @Override
     public Facture create(Facture facture) {
         int id = -1;
@@ -32,6 +41,11 @@ public class DAOFacture extends DAOGenerique<Facture> {
         return facture;
     }
 
+    /**
+     * Met à jour une facture existante dans la base de données.
+     * @param facture L'objet Facture à mettre à jour dans la base de données.
+     * @return L'objet Facture mis à jour.
+     */
     @Override
     public Facture update(Facture facture) {
         try {
@@ -48,6 +62,10 @@ public class DAOFacture extends DAOGenerique<Facture> {
         return facture;
     }
 
+    /**
+     * Supprime une facture de la base de données.
+     * @param facture L'objet Facture à supprimer de la base de données.
+     */
     @Override
     public void delete(Facture facture) {
         try {
@@ -60,13 +78,11 @@ public class DAOFacture extends DAOGenerique<Facture> {
         }
     }
 
-    @Override
-    public void saveAll(List<Facture> factures) {
-        for (Facture facture : factures) {
-            create(facture);
-        }
-    }
-
+    /**
+     * Trouve une facture par son ID dans la base de données.
+     * @param id L'ID de la facture à trouver.
+     * @return L'objet Facture trouvé, ou null si aucune facture n'a été trouvée.
+     */
     @Override
     public Facture findById(String id) {
         Facture facture = null;
@@ -80,7 +96,7 @@ public class DAOFacture extends DAOGenerique<Facture> {
                         rs.getInt("id"),
                         client,
                         rs.getDouble("totalFacture"),
-                        EnumModeDePaiment.valueOf(rs.getString("modeDePaiment")));
+                        EnumModeDePaiement.valueOf(rs.getString("modeDePaiment")));
                 facture.setStatutFacture(
                         EnumStatutFacture.valueOf(rs.getString("statutFacture")));
             }
@@ -91,6 +107,12 @@ public class DAOFacture extends DAOGenerique<Facture> {
         return facture;
     }
 
+    /**
+     * Trouve une facture par un champ spécifique dans la base de données.
+     * @param nomChamp Le nom du champ à utiliser pour la recherche.
+     * @param valeur La valeur du champ à utiliser pour la recherche.
+     * @return L'objet Facture trouvé, ou null si aucune facture n'a été trouvée.
+     */
     @Override
     public Facture findBySomeField(String nomChamp, String valeur) {
         Facture facture = null;
@@ -104,7 +126,7 @@ public class DAOFacture extends DAOGenerique<Facture> {
                         rs.getInt("id"),
                         client,
                         rs.getDouble("totalFacture"),
-                        EnumModeDePaiment.valueOf(
+                        EnumModeDePaiement.valueOf(
                                 rs.getString("modeDePaiment"))
                         );
                 facture.setStatutFacture(
@@ -118,6 +140,12 @@ public class DAOFacture extends DAOGenerique<Facture> {
         return facture;
     }
 
+    /**
+     * Trouve toutes les factures qui ont une certaine valeur pour un champ spécifique.
+     * @param fieldName Le nom du champ à utiliser pour la recherche.
+     * @param valeur La valeur du champ à utiliser pour la recherche.
+     * @return Une liste de factures qui correspondent à la recherche.
+     */
     @Override
     public List<Facture> findAllBySomeField(String fieldName, String valeur) {
         List<Facture> factures = new ArrayList<>();
@@ -131,7 +159,7 @@ public class DAOFacture extends DAOGenerique<Facture> {
                         rs.getInt("id"),
                         client,
                         rs.getDouble("totalFacture"),
-                        EnumModeDePaiment.valueOf(rs.getString("modeDePaiment")));
+                        EnumModeDePaiement.valueOf(rs.getString("modeDePaiment")));
                 facture.setStatutFacture(
                         EnumStatutFacture.valueOf(rs.getString("statutFacture")));
                 factures.add(facture);
@@ -143,6 +171,10 @@ public class DAOFacture extends DAOGenerique<Facture> {
         return factures;
     }
 
+    /**
+     * Trouve toutes les factures dans la base de données.
+     * @return Une liste de toutes les factures.
+     */
     @Override
     public List<Facture> findAll() {
         List<Facture> factures = new ArrayList<>();
@@ -155,7 +187,7 @@ public class DAOFacture extends DAOGenerique<Facture> {
                         rs.getInt("id"),
                         client,
                         rs.getDouble("totalFacture"),
-                        EnumModeDePaiment.valueOf(rs.getString("modeDePaiment")));
+                        EnumModeDePaiement.valueOf(rs.getString("modeDePaiment")));
                 facture.setStatutFacture(
                         EnumStatutFacture.valueOf(rs.getString("statutFacture")));
                 factures.add(facture);
@@ -167,28 +199,4 @@ public class DAOFacture extends DAOGenerique<Facture> {
         return factures;
     }
 
-    @Override
-    public List<Facture> findByName(String name) {
-        List<Facture> factures = new ArrayList<>();
-        try {
-            String query = "SELECT * FROM factures WHERE clientId = '"
-                    + new DAOClient().findBySomeField("nom", name).getNom() + "'";
-            ResultSet rs = mySQLManager.getData(query);
-            while (rs.next()) {
-                Client client = new DAOClient().findById(rs.getString("clientId"));
-                Facture facture = new Facture(
-                        rs.getInt("id"),
-                        client,
-                        rs.getDouble("totalFacture"),
-                        EnumModeDePaiment.valueOf(rs.getString("modeDePaiment")));
-                facture.setStatutFacture(
-                        EnumStatutFacture.valueOf(rs.getString("statutFacture")));
-                factures.add(facture);
-            }
-        } catch (SQLException e) {
-            System.err.println("Erreur SQL lors de la recherche d'une facture par nom : "
-                    + e.getMessage());
-        }
-        return factures;
-    }
 }
